@@ -1,0 +1,67 @@
+/**
+ * Condition data model for the Cascade Protocol.
+ *
+ * Represents a clinical condition or diagnosis, sourced from EHR imports
+ * or self-reported by the patient.
+ *
+ * RDF type: `health:ConditionRecord`
+ * Vocabulary: `https://ns.cascadeprotocol.org/health/v1#`
+ *
+ * @see https://cascadeprotocol.org/docs/cascade-protocol-schemas
+ */
+
+import type { CascadeRecord, ConditionStatus } from './common.js';
+
+/**
+ * A condition record in the Cascade Protocol.
+ *
+ * Required fields: `conditionName`, `status`, `dataProvenance`, `schemaVersion`.
+ * All date fields use ISO 8601 string format.
+ *
+ * Serializes as `health:ConditionRecord` in Turtle.
+ */
+export interface Condition extends CascadeRecord {
+  type: 'ConditionRecord';
+
+  /**
+   * Name of the condition or diagnosis.
+   * Maps to `health:conditionName` in Turtle serialization.
+   */
+  conditionName: string;
+
+  /**
+   * Clinical status of the condition.
+   * Maps to `health:status` in Turtle serialization.
+   */
+  status: ConditionStatus;
+
+  /**
+   * Date of condition onset (ISO 8601).
+   * Maps to `health:onsetDate` in Turtle serialization.
+   */
+  onsetDate?: string;
+
+  /**
+   * ICD-10-CM code URI for this condition.
+   * Maps to `health:icd10Code` in Turtle serialization as a URI reference.
+   */
+  icd10Code?: string;
+
+  /**
+   * SNOMED CT code URI for this condition.
+   * Maps to `health:snomedCode` in Turtle serialization as a URI reference.
+   */
+  snomedCode?: string;
+
+  /**
+   * Clinical classification of the condition (e.g., `"cardiovascular"`, `"endocrine"`, `"respiratory"`).
+   * Maps to `health:conditionClass` in Turtle serialization.
+   */
+  conditionClass?: string;
+
+  /**
+   * List of vital sign types that should be monitored for this condition.
+   * Maps to `health:monitoredVitalSigns` as an RDF list in Turtle serialization.
+   */
+  monitoredVitalSigns?: string[];
+}
