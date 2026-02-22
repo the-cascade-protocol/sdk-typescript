@@ -7,50 +7,11 @@
  * @module jsonld
  */
 
-import { NAMESPACES, PROPERTY_PREDICATES, TYPE_MAPPING } from '../vocabularies/namespaces.js';
+import { NAMESPACES, PROPERTY_PREDICATES, TYPE_MAPPING, TYPE_TO_MAPPING_KEY, buildReversePredicateMap } from '../vocabularies/namespaces.js';
 import { CONTEXT_URI } from './context.js';
 import type { CascadeRecord } from '../models/common.js';
 
 // ─── Internal Helpers ───────────────────────────────────────────────────────
-
-/**
- * Mapping from record type string to TYPE_MAPPING key.
- */
-const TYPE_TO_MAPPING_KEY: Record<string, string> = {
-  MedicationRecord: 'medications',
-  ConditionRecord: 'conditions',
-  AllergyRecord: 'allergies',
-  LabResultRecord: 'lab-results',
-  ImmunizationRecord: 'immunizations',
-  VitalSign: 'vital-signs',
-  Supplement: 'supplements',
-  ProcedureRecord: 'procedures',
-  FamilyHistoryRecord: 'family-history',
-  CoverageRecord: 'insurance',
-  InsurancePlan: 'insurance',
-  PatientProfile: 'patient-profile',
-  ActivitySnapshot: 'activity',
-  SleepSnapshot: 'sleep',
-};
-
-/**
- * Build a reverse mapping from full predicate URI to JSON property name.
- */
-function buildReversePredicateMap(): Map<string, string> {
-  const reverseMap = new Map<string, string>();
-  for (const [jsonKey, predShorthand] of Object.entries(PROPERTY_PREDICATES)) {
-    const colonIdx = predShorthand.indexOf(':');
-    if (colonIdx >= 0) {
-      const nsPrefix = predShorthand.slice(0, colonIdx);
-      const localName = predShorthand.slice(colonIdx + 1);
-      const nsUri = NAMESPACES[nsPrefix as keyof typeof NAMESPACES];
-      if (nsUri) {
-        reverseMap.set(`${nsUri}${localName}`, jsonKey);
-      }
-    }
-  }
-  return reverseMap;
-}
 
 const REVERSE_PREDICATE_MAP = buildReversePredicateMap();
 

@@ -18,7 +18,7 @@
  */
 
 import { TurtleBuilder, SubjectBuilder } from './turtle-builder.js';
-import { NAMESPACES, PROPERTY_PREDICATES, TYPE_MAPPING } from '../vocabularies/namespaces.js';
+import { NAMESPACES, PROPERTY_PREDICATES, TYPE_MAPPING, TYPE_TO_MAPPING_KEY } from '../vocabularies/namespaces.js';
 import type { CascadeRecord } from '../models/common.js';
 import type { Medication } from '../models/medication.js';
 import type { Condition } from '../models/condition.js';
@@ -34,27 +34,6 @@ import type { ActivitySnapshot } from '../models/activity-snapshot.js';
 import type { SleepSnapshot } from '../models/sleep-snapshot.js';
 
 // ─── Internal Helpers ───────────────────────────────────────────────────────
-
-/**
- * Mapping from record type string to the TYPE_MAPPING key used for
- * looking up rdfType, nameKey, and namePred.
- */
-const TYPE_TO_MAPPING_KEY: Record<string, string> = {
-  MedicationRecord: 'medications',
-  ConditionRecord: 'conditions',
-  AllergyRecord: 'allergies',
-  LabResultRecord: 'lab-results',
-  ImmunizationRecord: 'immunizations',
-  VitalSign: 'vital-signs',
-  Supplement: 'supplements',
-  ProcedureRecord: 'procedures',
-  FamilyHistoryRecord: 'family-history',
-  CoverageRecord: 'insurance',
-  InsurancePlan: 'insurance',
-  PatientProfile: 'patient-profile',
-  ActivitySnapshot: 'activity',
-  SleepSnapshot: 'sleep',
-};
 
 /**
  * Type-specific predicate overrides.

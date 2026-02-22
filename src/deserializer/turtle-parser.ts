@@ -18,7 +18,7 @@
  * @module deserializer
  */
 
-import { NAMESPACES, PROPERTY_PREDICATES, TYPE_MAPPING } from '../vocabularies/namespaces.js';
+import { NAMESPACES, TYPE_MAPPING, buildReversePredicateMap } from '../vocabularies/namespaces.js';
 import type { CascadeRecord } from '../models/common.js';
 
 // ─── Internal Types ─────────────────────────────────────────────────────────
@@ -49,31 +49,7 @@ const ADDITIONAL_REVERSE_MAPPINGS: Record<string, string> = {
   [`${NAMESPACES.clinical}interpretation`]: 'interpretation',
 };
 
-/**
- * Build a reverse mapping from full predicate URI to JSON property name.
- */
-function buildReversePredicateMap(): Map<string, string> {
-  const reverseMap = new Map<string, string>();
-  for (const [jsonKey, predShorthand] of Object.entries(PROPERTY_PREDICATES)) {
-    // Convert shorthand like "health:medicationName" to full URI
-    const colonIdx = predShorthand.indexOf(':');
-    if (colonIdx >= 0) {
-      const nsPrefix = predShorthand.slice(0, colonIdx);
-      const localName = predShorthand.slice(colonIdx + 1);
-      const nsUri = NAMESPACES[nsPrefix as keyof typeof NAMESPACES];
-      if (nsUri) {
-        reverseMap.set(`${nsUri}${localName}`, jsonKey);
-      }
-    }
-  }
-  // Add type-specific overrides
-  for (const [fullUri, jsonKey] of Object.entries(ADDITIONAL_REVERSE_MAPPINGS)) {
-    reverseMap.set(fullUri, jsonKey);
-  }
-  return reverseMap;
-}
-
-const REVERSE_PREDICATE_MAP = buildReversePredicateMap();
+const REVERSE_PREDICATE_MAP = buildReversePredicateMap(ADDITIONAL_REVERSE_MAPPINGS);
 
 /**
  * Build a reverse mapping from RDF type URI to record type string.
