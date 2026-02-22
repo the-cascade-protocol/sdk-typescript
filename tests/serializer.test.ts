@@ -224,6 +224,44 @@ describe('Turtle Serializer', () => {
     }
   });
 
+  describe('Procedure records', () => {
+    const fixtures = loadFixturesByPrefix('proc-');
+
+    for (const fixture of fixtures) {
+      it(`${fixture.id}: ${fixture.description}`, () => {
+        const input = fixture.input as unknown as CascadeRecord;
+        const result = serialize(input);
+
+        if (fixture.expectedOutput.validationMode === 'exact-match') {
+          expect(result).toBe(fixture.expectedOutput.turtle);
+        } else {
+          expect(result.length).toBeGreaterThan(0);
+          expect(result).toContain('@prefix');
+          expect(result).toContain('health:ProcedureRecord');
+        }
+      });
+    }
+  });
+
+  describe('Family history records', () => {
+    const fixtures = loadFixturesByPrefix('fam-');
+
+    for (const fixture of fixtures) {
+      it(`${fixture.id}: ${fixture.description}`, () => {
+        const input = fixture.input as unknown as CascadeRecord;
+        const result = serialize(input);
+
+        if (fixture.expectedOutput.validationMode === 'exact-match') {
+          expect(result).toBe(fixture.expectedOutput.turtle);
+        } else {
+          expect(result.length).toBeGreaterThan(0);
+          expect(result).toContain('@prefix');
+          expect(result).toContain('health:FamilyHistoryRecord');
+        }
+      });
+    }
+  });
+
   describe('Pod structure fixtures (not yet serializable)', () => {
     const fixtures = loadFixturesByPrefix('pod-');
 
