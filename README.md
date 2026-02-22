@@ -1,18 +1,18 @@
-# @cascade-protocol/sdk
+# @the-cascade-protocol/sdk
 
 TypeScript SDK for the Cascade Protocol -- a developer-first framework for patient-owned health data.
 
 ## Installation
 
 ```bash
-npm install @cascade-protocol/sdk
+npm install @the-cascade-protocol/sdk
 ```
 
 ## Quick Start
 
 ```typescript
-import type { Medication } from '@cascade-protocol/sdk';
-import { serialize, deserializeOne, toJsonLd } from '@cascade-protocol/sdk';
+import type { Medication } from '@the-cascade-protocol/sdk';
+import { serialize, deserializeOne, toJsonLd } from '@the-cascade-protocol/sdk';
 
 // Create a medication record
 const med: Medication = {
@@ -50,7 +50,7 @@ const jsonld = toJsonLd(med);
 ### Serialization
 
 ```typescript
-import { serialize, serializeMedication } from '@cascade-protocol/sdk';
+import { serialize, serializeMedication } from '@the-cascade-protocol/sdk';
 
 // Generic serializer (dispatches by record.type)
 const turtle = serialize(anyRecord);
@@ -64,8 +64,8 @@ Available type-specific serializers: `serializeMedication`, `serializeCondition`
 ### Deserialization
 
 ```typescript
-import { deserialize, deserializeOne } from '@cascade-protocol/sdk';
-import type { Medication } from '@cascade-protocol/sdk';
+import { deserialize, deserializeOne } from '@the-cascade-protocol/sdk';
+import type { Medication } from '@the-cascade-protocol/sdk';
 
 // Parse all medications from a Turtle document
 const meds = deserialize<Medication>(turtleString, 'MedicationRecord');
@@ -79,7 +79,7 @@ Supported type strings: `MedicationRecord`, `ConditionRecord`, `AllergyRecord`, 
 ### JSON-LD
 
 ```typescript
-import { toJsonLd, fromJsonLd, getContext, CONTEXT_URI } from '@cascade-protocol/sdk';
+import { toJsonLd, fromJsonLd, getContext, CONTEXT_URI } from '@the-cascade-protocol/sdk';
 
 // Convert to JSON-LD
 const doc = toJsonLd(medication);
@@ -95,7 +95,7 @@ const context = getContext();
 ### Vocabulary Constants
 
 ```typescript
-import { NAMESPACES, TYPE_MAPPING, PROPERTY_PREDICATES } from '@cascade-protocol/sdk';
+import { NAMESPACES, TYPE_MAPPING, PROPERTY_PREDICATES } from '@the-cascade-protocol/sdk';
 
 // Namespace URIs
 NAMESPACES.cascade  // "https://ns.cascadeprotocol.org/core/v1#"
@@ -112,7 +112,7 @@ PROPERTY_PREDICATES.medicationName  // "health:medicationName"
 ### TurtleBuilder
 
 ```typescript
-import { TurtleBuilder } from '@cascade-protocol/sdk';
+import { TurtleBuilder } from '@the-cascade-protocol/sdk';
 
 const turtle = new TurtleBuilder()
   .prefix('cascade', 'https://ns.cascadeprotocol.org/core/v1#')

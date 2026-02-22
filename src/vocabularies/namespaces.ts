@@ -17,7 +17,7 @@
  *
  * @example
  * ```typescript
- * import { NAMESPACES } from '@cascade-protocol/sdk';
+ * import { NAMESPACES } from '@the-cascade-protocol/sdk';
  *
  * // Use in Turtle prefix declarations
  * const prefix = `@prefix cascade: <${NAMESPACES.cascade}> .`;
@@ -94,7 +94,7 @@ export type NamespacePrefix = keyof typeof NAMESPACES;
  *
  * @example
  * ```typescript
- * import { TYPE_MAPPING } from '@cascade-protocol/sdk';
+ * import { TYPE_MAPPING } from '@the-cascade-protocol/sdk';
  *
  * const medType = TYPE_MAPPING.medications;
  * // { rdfType: 'health:MedicationRecord', nameKey: 'medicationName', namePred: 'health:medicationName' }
@@ -225,7 +225,7 @@ export const CURRENT_SCHEMA_VERSION = '1.3';
  *
  * @example
  * ```typescript
- * import { PROPERTY_PREDICATES } from '@cascade-protocol/sdk';
+ * import { PROPERTY_PREDICATES } from '@the-cascade-protocol/sdk';
  *
  * const pred = PROPERTY_PREDICATES.dose; // 'health:dose'
  * ```

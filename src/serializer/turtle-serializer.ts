@@ -7,7 +7,7 @@
  *
  * @example
  * ```typescript
- * import { serialize, serializeMedication } from '@cascade-protocol/sdk';
+ * import { serialize, serializeMedication } from '@the-cascade-protocol/sdk';
  *
  * const turtle = serializeMedication(myMed);
  * // or generically:

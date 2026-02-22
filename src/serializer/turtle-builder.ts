@@ -7,7 +7,7 @@
  *
  * @example
  * ```typescript
- * import { TurtleBuilder } from '@cascade-protocol/sdk';
+ * import { TurtleBuilder } from '@the-cascade-protocol/sdk';
  *
  * const turtle = new TurtleBuilder()
  *   .prefix('cascade', 'https://ns.cascadeprotocol.org/core/v1#')

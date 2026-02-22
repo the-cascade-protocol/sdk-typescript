@@ -1,5 +1,5 @@
 /**
- * @cascade-protocol/sdk - TypeScript library for structured health data.
+ * @the-cascade-protocol/sdk - TypeScript library for structured health data.
  *
  * Provides typed interfaces for all Cascade Protocol data types,
  * vocabulary constants, namespace URIs, and serialization/deserialization
@@ -7,8 +7,8 @@
  *
  * @example
  * ```typescript
- * import type { Medication, Condition, HealthProfile } from '@cascade-protocol/sdk';
- * import { NAMESPACES, serialize, deserialize, toJsonLd } from '@cascade-protocol/sdk';
+ * import type { Medication, Condition, HealthProfile } from '@the-cascade-protocol/sdk';
+ * import { NAMESPACES, serialize, deserialize, toJsonLd } from '@the-cascade-protocol/sdk';
  * ```
  *
  * @see https://cascadeprotocol.org

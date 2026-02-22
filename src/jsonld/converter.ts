@@ -31,7 +31,7 @@ const REVERSE_PREDICATE_MAP = buildReversePredicateMap();
  *
  * @example
  * ```typescript
- * import { toJsonLd } from '@cascade-protocol/sdk';
+ * import { toJsonLd } from '@the-cascade-protocol/sdk';
  *
  * const jsonld = toJsonLd(myMedication);
  * // { "@context": "https://...", "@id": "urn:uuid:...", "@type": "health:MedicationRecord", ... }
@@ -83,8 +83,8 @@ export function toJsonLd(record: CascadeRecord): object {
  *
  * @example
  * ```typescript
- * import { fromJsonLd } from '@cascade-protocol/sdk';
- * import type { Medication } from '@cascade-protocol/sdk';
+ * import { fromJsonLd } from '@the-cascade-protocol/sdk';
+ * import type { Medication } from '@the-cascade-protocol/sdk';
  *
  * const med = fromJsonLd<Medication>(jsonldDoc);
  * ```

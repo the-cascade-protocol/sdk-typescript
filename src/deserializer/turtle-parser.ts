@@ -911,8 +911,8 @@ function triplesToRecord<T extends CascadeRecord>(
  *
  * @example
  * ```typescript
- * import { deserialize } from '@cascade-protocol/sdk';
- * import type { Medication } from '@cascade-protocol/sdk';
+ * import { deserialize } from '@the-cascade-protocol/sdk';
+ * import type { Medication } from '@the-cascade-protocol/sdk';
  *
  * const meds = deserialize<Medication>(turtleString, 'MedicationRecord');
  * ```
