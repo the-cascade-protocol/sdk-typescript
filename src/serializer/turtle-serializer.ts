@@ -260,7 +260,7 @@ function serializeRecord(record: CascadeRecord): string {
   //    are placed after the type-specific required fields
   // 3. All other fields in their natural object order
 
-  const rec = record as unknown as Record<string, unknown>;
+  const rec: Record<string, unknown> = { ...record };
 
   // Collect field entries, preserving the order they appear in the record,
   // but ensuring a deterministic output that matches the conformance fixtures.

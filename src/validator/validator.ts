@@ -126,7 +126,7 @@ function validateBase(record: CascadeRecord): ValidationError[] {
 
 function validateWarnings(record: CascadeRecord): ValidationError[] {
   const warnings: ValidationError[] = [];
-  const rec = record as unknown as RecordFields;
+  const rec: RecordFields = { ...record };
 
   // Schema version warning
   if (record.schemaVersion && record.schemaVersion !== CURRENT_SCHEMA_VERSION) {
@@ -156,7 +156,7 @@ function validateWarnings(record: CascadeRecord): ValidationError[] {
 
 function validateTypeSpecific(record: CascadeRecord): ValidationError[] {
   const errors: ValidationError[] = [];
-  const rec = record as unknown as RecordFields;
+  const rec: RecordFields = { ...record };
 
   switch (record.type) {
     case 'MedicationRecord': {
