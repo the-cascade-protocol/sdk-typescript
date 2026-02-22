@@ -10,6 +10,8 @@ export type ConsentCategory =
   | 'labResults'
   | 'vitalSigns'
   | 'immunizations'
+  | 'procedures'
+  | 'familyHistory'
   | 'coverage'
   | 'patientProfile'
   | 'activitySnapshots'
@@ -70,8 +72,8 @@ export function applyConsent(profile: HealthProfile, policy: ConsentPolicy): Hea
     labResults: filterByProvenance(profile.labResults, 'labResults'),
     vitalSigns: filterByProvenance(profile.vitalSigns, 'vitalSigns'),
     immunizations: filterByProvenance(profile.immunizations, 'immunizations'),
-    procedures: filterByProvenance(profile.procedures, 'procedures' as ConsentCategory),
-    familyHistory: filterByProvenance(profile.familyHistory, 'familyHistory' as ConsentCategory),
+    procedures: filterByProvenance(profile.procedures, 'procedures'),
+    familyHistory: filterByProvenance(profile.familyHistory, 'familyHistory'),
     coverage: filterByProvenance(profile.coverage, 'coverage'),
     activitySnapshots: filterByProvenance(profile.activitySnapshots, 'activitySnapshots'),
     sleepSnapshots: filterByProvenance(profile.sleepSnapshots, 'sleepSnapshots'),

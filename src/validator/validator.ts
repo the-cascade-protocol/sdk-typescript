@@ -1,4 +1,5 @@
 import type { CascadeRecord, ProvenanceType } from '../models/common.js';
+import { CURRENT_SCHEMA_VERSION } from '../vocabularies/namespaces.js';
 
 // ─── Public Types ───────────────────────────────────────────────────────────
 
@@ -128,10 +129,10 @@ function validateWarnings(record: CascadeRecord): ValidationError[] {
   const rec = record as unknown as RecordFields;
 
   // Schema version warning
-  if (record.schemaVersion && record.schemaVersion !== '1.3') {
+  if (record.schemaVersion && record.schemaVersion !== CURRENT_SCHEMA_VERSION) {
     warnings.push({
       field: 'schemaVersion',
-      message: `schemaVersion "${record.schemaVersion}" does not match current version "1.3"`,
+      message: `schemaVersion "${record.schemaVersion}" does not match current version "${CURRENT_SCHEMA_VERSION}"`,
       severity: 'warning',
     });
   }
@@ -187,8 +188,8 @@ function validateTypeSpecific(record: CascadeRecord): ValidationError[] {
       const status = rec['status'];
       if (typeof status !== 'string' || !VALID_CONDITION_STATUSES.has(status)) {
         errors.push({
-          field: 'clinicalStatus',
-          message: `clinicalStatus "${String(status ?? '')}" must be a valid ConditionStatus (active, resolved, remission, inactive)`,
+          field: 'status',
+          message: `status "${String(status ?? '')}" must be a valid ConditionStatus (active, resolved, remission, inactive)`,
           severity: 'error',
         });
       }

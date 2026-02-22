@@ -74,6 +74,7 @@ export type { HealthProfile } from './models/health-profile.js';
 
 export {
   NAMESPACES,
+  CURRENT_SCHEMA_VERSION,
   TYPE_MAPPING,
   PROPERTY_PREDICATES,
 } from './vocabularies/index.js';

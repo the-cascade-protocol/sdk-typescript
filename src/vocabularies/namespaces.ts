@@ -178,6 +178,16 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
   },
 } as const;
 
+// ─── Schema Version ──────────────────────────────────────────────────────────
+
+/**
+ * Current Cascade Protocol schema version.
+ *
+ * Used by the validator to check records against the expected version.
+ * Update this constant when the protocol schema version is bumped.
+ */
+export const CURRENT_SCHEMA_VERSION = '1.3';
+
 // ─── Property Predicates ─────────────────────────────────────────────────────
 
 /**
@@ -271,6 +281,7 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   supplyDurationDays: 'clinical:supplyDurationDays',
   prescriptionCategory: 'clinical:prescriptionCategory',
   drugCode: 'clinical:drugCode',
+  drugCodes: 'clinical:drugCode',
 
   // ── Coverage predicates (clinical: and coverage: vocabularies) ──
   providerName: 'clinical:providerName',
