@@ -17,6 +17,8 @@ import type { LabResult } from '../src/models/lab-result.js';
 import type { Immunization } from '../src/models/immunization.js';
 import type { Coverage } from '../src/models/coverage.js';
 import type { PatientProfile } from '../src/models/patient-profile.js';
+import type { Procedure } from '../src/models/procedure.js';
+import type { FamilyHistory } from '../src/models/family-history.js';
 import type { ActivitySnapshot } from '../src/models/activity-snapshot.js';
 import type { SleepSnapshot } from '../src/models/sleep-snapshot.js';
 import type { HealthProfile } from '../src/models/health-profile.js';
@@ -140,6 +142,29 @@ function makeSleepSnapshot(overrides: Partial<SleepSnapshot> = {}): SleepSnapsho
   };
 }
 
+function makeProcedure(overrides: Partial<Procedure> = {}): Procedure {
+  return {
+    id: 'urn:uuid:test-proc-1',
+    type: 'ProcedureRecord',
+    dataProvenance: 'ClinicalGenerated',
+    schemaVersion: '1.3',
+    procedureName: 'Appendectomy',
+    ...overrides,
+  };
+}
+
+function makeFamilyHistory(overrides: Partial<FamilyHistory> = {}): FamilyHistory {
+  return {
+    id: 'urn:uuid:test-fam-1',
+    type: 'FamilyHistoryRecord',
+    dataProvenance: 'ClinicalGenerated',
+    schemaVersion: '1.3',
+    relationship: 'Mother',
+    conditionName: 'Type 2 Diabetes',
+    ...overrides,
+  };
+}
+
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
 /** Find a PodFile by path in an array, or fail. */
@@ -206,6 +231,36 @@ describe('Pod Builder', () => {
       expect(vitalFile.content).toContain('urn:uuid:test-vital-1');
       expect(vitalFile.content).toContain('"heartRate"');
     });
+
+    it('builds a pod with one procedure record', () => {
+      const builder = new PodBuilder({ title: 'Test Pod' });
+      builder.addProcedure(makeProcedure());
+      const files = builder.build();
+
+      const paths = filePaths(files);
+      expect(paths).toContain('clinical/procedures.ttl');
+      expect(paths).toContain('index.ttl');
+
+      const procFile = findFile(files, 'clinical/procedures.ttl');
+      expect(procFile.content).toContain('health:ProcedureRecord');
+      expect(procFile.content).toContain('urn:uuid:test-proc-1');
+      expect(procFile.content).toContain('Appendectomy');
+    });
+
+    it('builds a pod with one family history record', () => {
+      const builder = new PodBuilder({ title: 'Test Pod' });
+      builder.addFamilyHistory(makeFamilyHistory());
+      const files = builder.build();
+
+      const paths = filePaths(files);
+      expect(paths).toContain('clinical/family-history.ttl');
+      expect(paths).toContain('index.ttl');
+
+      const famFile = findFile(files, 'clinical/family-history.ttl');
+      expect(famFile.content).toContain('health:FamilyHistoryRecord');
+      expect(famFile.content).toContain('urn:uuid:test-fam-1');
+      expect(famFile.content).toContain('Type 2 Diabetes');
+    });
   });
 
   describe('Full health profile pods', () => {
@@ -226,8 +281,8 @@ describe('Pod Builder', () => {
           }),
         ],
         immunizations: [makeImmunization()],
-        procedures: [],
-        familyHistory: [],
+        procedures: [makeProcedure()],
+        familyHistory: [makeFamilyHistory()],
         coverage: [makeCoverage()],
         activitySnapshots: [makeActivitySnapshot()],
         sleepSnapshots: [makeSleepSnapshot()],
@@ -244,6 +299,8 @@ describe('Pod Builder', () => {
       expect(paths).toContain('clinical/lab-results.ttl');
       expect(paths).toContain('clinical/vital-signs.ttl');
       expect(paths).toContain('clinical/immunizations.ttl');
+      expect(paths).toContain('clinical/procedures.ttl');
+      expect(paths).toContain('clinical/family-history.ttl');
       expect(paths).toContain('clinical/insurance.ttl');
       expect(paths).toContain('clinical/patient-profile.ttl');
       expect(paths).toContain('wellness/vital-signs.ttl');
@@ -425,6 +482,26 @@ describe('Pod Builder', () => {
       const immFile = findFile(files, 'clinical/immunizations.ttl');
       expect(immFile.content).toContain('health:ImmunizationRecord');
       expect(immFile.content).toContain('COVID-19 Vaccine');
+    });
+
+    it('procedures go to clinical/procedures.ttl', () => {
+      const builder = new PodBuilder({ title: 'Test' });
+      builder.addProcedure(makeProcedure());
+      const files = builder.build();
+
+      const procFile = findFile(files, 'clinical/procedures.ttl');
+      expect(procFile.content).toContain('health:ProcedureRecord');
+      expect(procFile.content).toContain('Appendectomy');
+    });
+
+    it('family history goes to clinical/family-history.ttl', () => {
+      const builder = new PodBuilder({ title: 'Test' });
+      builder.addFamilyHistory(makeFamilyHistory());
+      const files = builder.build();
+
+      const famFile = findFile(files, 'clinical/family-history.ttl');
+      expect(famFile.content).toContain('health:FamilyHistoryRecord');
+      expect(famFile.content).toContain('Type 2 Diabetes');
     });
 
     it('coverage records go to clinical/insurance.ttl', () => {

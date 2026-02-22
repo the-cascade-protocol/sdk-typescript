@@ -178,6 +178,33 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
   },
 } as const;
 
+// ─── Record Type to Mapping Key ─────────────────────────────────────────────
+
+/**
+ * Mapping from record type string (e.g. 'MedicationRecord') to the
+ * TYPE_MAPPING key (e.g. 'medications') used for looking up rdfType,
+ * nameKey, and namePred.
+ *
+ * Used by the serializer, deserializer, and JSON-LD converter to
+ * dispatch on record type.
+ */
+export const TYPE_TO_MAPPING_KEY: Record<string, string> = {
+  MedicationRecord: 'medications',
+  ConditionRecord: 'conditions',
+  AllergyRecord: 'allergies',
+  LabResultRecord: 'lab-results',
+  ImmunizationRecord: 'immunizations',
+  VitalSign: 'vital-signs',
+  Supplement: 'supplements',
+  ProcedureRecord: 'procedures',
+  FamilyHistoryRecord: 'family-history',
+  CoverageRecord: 'insurance',
+  InsurancePlan: 'insurance',
+  PatientProfile: 'patient-profile',
+  ActivitySnapshot: 'activity',
+  SleepSnapshot: 'sleep',
+};
+
 // ─── Schema Version ──────────────────────────────────────────────────────────
 
 /**
@@ -321,6 +348,7 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   location: 'health:location',
 
   // ── Family history predicates ──
+  // Note: `relationship` is shared with Coverage predicates above (clinical:relationship)
   onsetAge: 'health:onsetAge',
 
   // ── Shared predicates ──
@@ -345,3 +373,37 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   dataProvenance: 'cascade:dataProvenance',
   schemaVersion: 'cascade:schemaVersion',
 } as const;
+
+// ─── Reverse Predicate Mapping ──────────────────────────────────────────────
+
+/**
+ * Build a reverse mapping from full predicate URI to JSON property name.
+ *
+ * Expands each PROPERTY_PREDICATES shorthand (e.g. 'health:medicationName')
+ * to a full URI and maps it back to the JSON key.
+ *
+ * @param additionalMappings - Optional extra full-URI-to-JSON-key entries
+ *   (e.g. type-specific overrides for VitalSign clinical predicates).
+ */
+export function buildReversePredicateMap(
+  additionalMappings?: Record<string, string>,
+): Map<string, string> {
+  const reverseMap = new Map<string, string>();
+  for (const [jsonKey, predShorthand] of Object.entries(PROPERTY_PREDICATES)) {
+    const colonIdx = predShorthand.indexOf(':');
+    if (colonIdx >= 0) {
+      const nsPrefix = predShorthand.slice(0, colonIdx);
+      const localName = predShorthand.slice(colonIdx + 1);
+      const nsUri = NAMESPACES[nsPrefix as keyof typeof NAMESPACES];
+      if (nsUri) {
+        reverseMap.set(`${nsUri}${localName}`, jsonKey);
+      }
+    }
+  }
+  if (additionalMappings) {
+    for (const [fullUri, jsonKey] of Object.entries(additionalMappings)) {
+      reverseMap.set(fullUri, jsonKey);
+    }
+  }
+  return reverseMap;
+}

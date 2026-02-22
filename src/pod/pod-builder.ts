@@ -1,11 +1,13 @@
 import { serialize } from '../serializer/turtle-serializer.js';
-import { NAMESPACES } from '../vocabularies/namespaces.js';
+import { CURRENT_SCHEMA_VERSION, NAMESPACES } from '../vocabularies/namespaces.js';
 import type { Medication } from '../models/medication.js';
 import type { Condition } from '../models/condition.js';
 import type { Allergy } from '../models/allergy.js';
 import type { LabResult } from '../models/lab-result.js';
 import type { VitalSign } from '../models/vital-sign.js';
 import type { Immunization } from '../models/immunization.js';
+import type { Procedure } from '../models/procedure.js';
+import type { FamilyHistory } from '../models/family-history.js';
 import type { Coverage } from '../models/coverage.js';
 import type { PatientProfile } from '../models/patient-profile.js';
 import type { ActivitySnapshot } from '../models/activity-snapshot.js';
@@ -128,6 +130,8 @@ export class PodBuilder {
   private readonly _clinicalVitalSigns: VitalSign[] = [];
   private readonly _deviceVitalSigns: VitalSign[] = [];
   private readonly _immunizations: Immunization[] = [];
+  private readonly _procedures: Procedure[] = [];
+  private readonly _familyHistory: FamilyHistory[] = [];
   private readonly _coverage: Coverage[] = [];
   private readonly _patientProfiles: PatientProfile[] = [];
   private readonly _activitySnapshots: ActivitySnapshot[] = [];
@@ -171,6 +175,16 @@ export class PodBuilder {
     return this;
   }
 
+  addProcedure(proc: Procedure): this {
+    this._procedures.push(proc);
+    return this;
+  }
+
+  addFamilyHistory(fam: FamilyHistory): this {
+    this._familyHistory.push(fam);
+    return this;
+  }
+
   addCoverage(cov: Coverage): this {
     this._coverage.push(cov);
     return this;
@@ -201,14 +215,8 @@ export class PodBuilder {
     for (const lab of profile.labResults) this.addLabResult(lab);
     for (const vital of profile.vitalSigns) this.addVitalSign(vital);
     for (const imm of profile.immunizations) this.addImmunization(imm);
-    for (const proc of profile.procedures) {
-      // Procedures don't have a dedicated pod file per the spec,
-      // but we store them as part of the clinical category if added via HealthProfile.
-      void proc;
-    }
-    for (const fam of profile.familyHistory) {
-      void fam;
-    }
+    for (const proc of profile.procedures) this.addProcedure(proc);
+    for (const fam of profile.familyHistory) this.addFamilyHistory(fam);
     for (const cov of profile.coverage) this.addCoverage(cov);
     for (const activity of profile.activitySnapshots) this.addActivitySnapshot(activity);
     for (const sleep of profile.sleepSnapshots) this.addSleepSnapshot(sleep);
@@ -231,6 +239,8 @@ export class PodBuilder {
     addFile('clinical/lab-results.ttl', this._labResults);
     addFile('clinical/vital-signs.ttl', this._clinicalVitalSigns);
     addFile('clinical/immunizations.ttl', this._immunizations);
+    addFile('clinical/procedures.ttl', this._procedures);
+    addFile('clinical/family-history.ttl', this._familyHistory);
     addFile('clinical/insurance.ttl', this._coverage);
     addFile('clinical/patient-profile.ttl', this._patientProfiles);
 
@@ -253,13 +263,13 @@ export class PodBuilder {
       title: this._options.title,
       description: this._options.description,
       created: new Date().toISOString(),
-      schemaVersion: this._options.schemaVersion ?? '1.3',
+      schemaVersion: this._options.schemaVersion ?? CURRENT_SCHEMA_VERSION,
       files: filePaths,
     };
   }
 
   private _buildIndex(files: PodFile[]): string {
-    const schemaVersion = this._options.schemaVersion ?? '1.3';
+    const schemaVersion = this._options.schemaVersion ?? CURRENT_SCHEMA_VERSION;
     const created = new Date().toISOString();
 
     const dataPaths = files
