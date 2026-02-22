@@ -262,14 +262,6 @@ describe('Turtle Serializer', () => {
     }
   });
 
-  describe('Pod structure fixtures (not yet serializable)', () => {
-    const fixtures = loadFixturesByPrefix('pod-');
-
-    for (const fixture of fixtures) {
-      it.todo(`${fixture.id}: ${fixture.description} (requires pod builder module)`);
-    }
-  });
-
   describe('Specific fixture validation', () => {
     it('med-001: serializes Lisinopril with correct prefixes and fields', () => {
       const fixture = loadFixture('med-001');
