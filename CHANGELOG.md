@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0 (2026-03-12)
+
+### Added
+- PodBuilder support for procedures and family-history records
+- Shared utilities extracted to vocabularies module
+
+### Fixed
+- npm scope corrected to `@the-cascade-protocol`
+- Publishing metadata (repository, homepage, bugs, files fields)
+
 ## 1.0.0 (2026-02-21)
 
 ### Added
