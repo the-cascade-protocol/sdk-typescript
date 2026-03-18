@@ -137,9 +137,14 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
     namePred: 'clinical:supplementName',
   },
   procedures: {
-    rdfType: 'health:ProcedureRecord',
+    rdfType: 'clinical:Procedure',
     nameKey: 'procedureName',
-    namePred: 'health:procedureName',
+    namePred: 'clinical:procedureName',
+  },
+  encounters: {
+    rdfType: 'clinical:Encounter',
+    nameKey: 'encounterType',
+    namePred: 'clinical:encounterType',
   },
   'family-history': {
     rdfType: 'health:FamilyHistoryRecord',
@@ -197,6 +202,8 @@ export const TYPE_TO_MAPPING_KEY: Record<string, string> = {
   VitalSign: 'vital-signs',
   Supplement: 'supplements',
   ProcedureRecord: 'procedures',
+  Procedure: 'procedures',
+  Encounter: 'encounters',
   FamilyHistoryRecord: 'family-history',
   CoverageRecord: 'insurance',
   InsurancePlan: 'insurance',
@@ -342,10 +349,19 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   familyName: 'foaf:familyName',
   bloodType: 'health:bloodType',
 
-  // ── Procedure predicates ──
-  procedureName: 'health:procedureName',
+  // ── Procedure predicates (clinical: vocabulary — EHR-sourced) ──
+  procedureName: 'clinical:procedureName',
+  cptCode: 'clinical:cptCode',
+  procedureStatus: 'clinical:procedureStatus',
   performer: 'health:performer',
   location: 'health:location',
+
+  // ── Encounter predicates (clinical: vocabulary — EHR-sourced) ──
+  encounterType: 'clinical:encounterType',
+  encounterClass: 'clinical:encounterClass',
+  encounterStatus: 'clinical:encounterStatus',
+  encounterStart: 'clinical:encounterStart',
+  encounterEnd: 'clinical:encounterEnd',
 
   // ── Family history predicates ──
   // Note: `relationship` is shared with Coverage predicates above (clinical:relationship)

@@ -47,6 +47,14 @@ const ADDITIONAL_REVERSE_MAPPINGS: Record<string, string> = {
   // VitalSign uses clinical: namespace for these predicates
   [`${NAMESPACES.clinical}snomedCode`]: 'snomedCode',
   [`${NAMESPACES.clinical}interpretation`]: 'interpretation',
+
+  // Procedure and Encounter (EHR-imported) use clinical: for predicates
+  // that health: records express under the health: namespace. These aliases
+  // ensure both namespace variants deserialize to the same JSON key.
+  [`${NAMESPACES.clinical}performedDate`]: 'performedDate',
+  [`${NAMESPACES.clinical}sourceRecordId`]: 'sourceRecordId',
+  [`${NAMESPACES.clinical}status`]: 'status',
+  [`${NAMESPACES.clinical}notes`]: 'notes',
 };
 
 const REVERSE_PREDICATE_MAP = buildReversePredicateMap(ADDITIONAL_REVERSE_MAPPINGS);

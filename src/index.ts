@@ -52,6 +52,7 @@ export type { LabResult } from './models/lab-result.js';
 export type { VitalSign } from './models/vital-sign.js';
 export type { Immunization } from './models/immunization.js';
 export type { Procedure } from './models/procedure.js';
+export type { Encounter } from './models/encounter.js';
 export type { FamilyHistory } from './models/family-history.js';
 export type { Coverage } from './models/coverage.js';
 

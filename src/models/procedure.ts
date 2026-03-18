@@ -3,8 +3,8 @@
  *
  * Represents a clinical procedure record.
  *
- * RDF type: `health:ProcedureRecord`
- * Vocabulary: `https://ns.cascadeprotocol.org/health/v1#`
+ * RDF type: `clinical:Procedure`
+ * Vocabulary: `https://ns.cascadeprotocol.org/clinical/v1#`
  *
  * @see https://cascadeprotocol.org/docs/cascade-protocol-schemas
  */
@@ -17,16 +17,28 @@ import type { CascadeRecord, ProcedureStatus } from './common.js';
  * Required fields: `procedureName`, `dataProvenance`, `schemaVersion`.
  * All date fields use ISO 8601 string format.
  *
- * Serializes as `health:ProcedureRecord` in Turtle.
+ * Serializes as `clinical:Procedure` in Turtle.
  */
 export interface Procedure extends CascadeRecord {
-  type: 'ProcedureRecord';
+  type: 'Procedure';
 
   /**
    * Name of the procedure.
-   * Maps to `health:procedureName` in Turtle serialization.
+   * Maps to `clinical:procedureName` in Turtle serialization.
    */
   procedureName: string;
+
+  /**
+   * CPT procedure code (e.g., "67228" for retinal photocoagulation).
+   * Maps to `clinical:cptCode` in Turtle serialization.
+   */
+  cptCode?: string;
+
+  /**
+   * Status of the procedure (e.g., "completed", "in-progress").
+   * Maps to `clinical:procedureStatus` in Turtle serialization.
+   */
+  procedureStatus?: string;
 
   /**
    * Date and time the procedure was performed (ISO 8601).
