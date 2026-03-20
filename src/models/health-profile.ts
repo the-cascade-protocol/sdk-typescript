@@ -17,6 +17,10 @@ import type { Immunization } from './immunization.js';
 import type { Procedure } from './procedure.js';
 import type { FamilyHistory } from './family-history.js';
 import type { Coverage } from './coverage.js';
+import type { MedicationAdministration } from './medication-administration.js';
+import type { ImplantedDevice } from './implanted-device.js';
+import type { ImagingStudy } from './imaging-study.js';
+import type { ClaimRecord, BenefitStatement, DenialNotice, AppealRecord } from './claim-record.js';
 import type { PatientProfile } from './patient-profile.js';
 import type { ActivitySnapshot } from './activity-snapshot.js';
 import type { SleepSnapshot } from './sleep-snapshot.js';
@@ -63,4 +67,25 @@ export interface HealthProfile {
 
   /** Nightly sleep summaries from wearable devices. */
   sleepSnapshots: SleepSnapshot[];
+
+  /** Medication administration events. */
+  medicationAdministrations?: MedicationAdministration[];
+
+  /** Permanently implanted medical devices. */
+  implantedDevices?: ImplantedDevice[];
+
+  /** Diagnostic imaging study records. */
+  imagingStudies?: ImagingStudy[];
+
+  /** Insurance claims submitted to insurers. */
+  claimRecords?: ClaimRecord[];
+
+  /** Explanation of Benefits statements from insurers. */
+  benefitStatements?: BenefitStatement[];
+
+  /** Formal denial notices from insurers. */
+  denialNotices?: DenialNotice[];
+
+  /** Appeal records contesting denial notices. */
+  appealRecords?: AppealRecord[];
 }

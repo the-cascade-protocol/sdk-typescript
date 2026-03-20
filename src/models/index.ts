@@ -43,6 +43,7 @@ export type { Coverage } from './coverage.js';
 export type { MedicationAdministration } from './medication-administration.js';
 export type { ImplantedDevice } from './implanted-device.js';
 export type { ImagingStudy } from './imaging-study.js';
+export type { ClaimRecord, BenefitStatement, DenialNotice, AppealRecord } from './claim-record.js';
 
 // Patient profile and nested types
 export type {

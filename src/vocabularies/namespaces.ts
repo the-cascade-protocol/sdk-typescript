@@ -176,6 +176,11 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
     nameKey: 'deniedProcedureCode',
     namePred: 'coverage:deniedProcedureCode',
   },
+  appeals: {
+    rdfType: 'coverage:AppealRecord',
+    nameKey: 'appealLevel',
+    namePred: 'coverage:appealLevel',
+  },
   'family-history': {
     rdfType: 'health:FamilyHistoryRecord',
     nameKey: 'conditionName',
@@ -243,6 +248,7 @@ export const TYPE_TO_MAPPING_KEY: Record<string, string> = {
   ClaimRecord: 'claims',
   BenefitStatement: 'benefit-statements',
   DenialNotice: 'denial-notices',
+  AppealRecord: 'appeals',
   PatientProfile: 'patient-profile',
   ActivitySnapshot: 'activity',
   SleepSnapshot: 'sleep',
