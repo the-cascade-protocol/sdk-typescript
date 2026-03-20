@@ -38,7 +38,7 @@ const jsonld = toJsonLd(med);
 
 ## Features
 
-- **13 data model interfaces** -- Medication, Condition, Allergy, LabResult, VitalSign, Immunization, Procedure, FamilyHistory, Coverage, PatientProfile, ActivitySnapshot, SleepSnapshot, HealthProfile
+- **21 data model interfaces** -- Medication, Condition, Allergy, LabResult, VitalSign, Immunization, Procedure, FamilyHistory, Coverage, PatientProfile, ActivitySnapshot, SleepSnapshot, HealthProfile, Encounter, MedicationAdministration, ImplantedDevice, ImagingStudy, ClaimRecord, BenefitStatement, DenialNotice, AppealRecord
 - **Turtle serializer** -- Produces conformance-tested RDF/Turtle output with typed literals, URI references, and RDF lists
 - **Turtle deserializer** -- Zero-dependency parser for Cascade Protocol Turtle documents
 - **JSON-LD conversion** -- Convert records to/from JSON-LD format with bundled context
