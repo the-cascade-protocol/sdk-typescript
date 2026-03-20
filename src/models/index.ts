@@ -40,6 +40,9 @@ export type { Procedure } from './procedure.js';
 export type { Encounter } from './encounter.js';
 export type { FamilyHistory } from './family-history.js';
 export type { Coverage } from './coverage.js';
+export type { MedicationAdministration } from './medication-administration.js';
+export type { ImplantedDevice } from './implanted-device.js';
+export type { ImagingStudy } from './imaging-study.js';
 
 // Patient profile and nested types
 export type {

@@ -146,6 +146,36 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
     nameKey: 'encounterType',
     namePred: 'clinical:encounterType',
   },
+  'medication-administrations': {
+    rdfType: 'clinical:MedicationAdministration',
+    nameKey: 'medicationName',
+    namePred: 'health:medicationName',
+  },
+  'implanted-devices': {
+    rdfType: 'clinical:ImplantedDevice',
+    nameKey: 'deviceType',
+    namePred: 'clinical:deviceType',
+  },
+  'imaging-studies': {
+    rdfType: 'clinical:ImagingStudy',
+    nameKey: 'studyDescription',
+    namePred: 'clinical:studyDescription',
+  },
+  claims: {
+    rdfType: 'coverage:ClaimRecord',
+    nameKey: 'claimType',
+    namePred: 'coverage:claimType',
+  },
+  'benefit-statements': {
+    rdfType: 'coverage:BenefitStatement',
+    nameKey: 'adjudicationStatus',
+    namePred: 'coverage:adjudicationStatus',
+  },
+  'denial-notices': {
+    rdfType: 'coverage:DenialNotice',
+    nameKey: 'deniedProcedureCode',
+    namePred: 'coverage:deniedProcedureCode',
+  },
   'family-history': {
     rdfType: 'health:FamilyHistoryRecord',
     nameKey: 'conditionName',
@@ -207,6 +237,12 @@ export const TYPE_TO_MAPPING_KEY: Record<string, string> = {
   FamilyHistoryRecord: 'family-history',
   CoverageRecord: 'insurance',
   InsurancePlan: 'insurance',
+  MedicationAdministration: 'medication-administrations',
+  ImplantedDevice: 'implanted-devices',
+  ImagingStudy: 'imaging-studies',
+  ClaimRecord: 'claims',
+  BenefitStatement: 'benefit-statements',
+  DenialNotice: 'denial-notices',
   PatientProfile: 'patient-profile',
   ActivitySnapshot: 'activity',
   SleepSnapshot: 'sleep',
@@ -384,6 +420,63 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   remSleepMinutes: 'health:remSleepMinutes',
   lightSleepMinutes: 'health:lightSleepMinutes',
   awakenings: 'health:awakenings',
+
+  // ── MedicationAdministration predicates (clinical: vocabulary) ──
+  administeredDate: 'clinical:administeredDate',
+  administeredDose: 'clinical:administeredDose',
+  administeredRoute: 'clinical:administeredRoute',
+  administrationStatus: 'clinical:administrationStatus',
+
+  // ── ImplantedDevice predicates (clinical: vocabulary) ──
+  deviceType: 'clinical:deviceType',
+  implantDate: 'clinical:implantDate',
+  deviceManufacturer: 'clinical:deviceManufacturer',
+  udiCarrier: 'clinical:udiCarrier',
+  deviceStatus: 'clinical:deviceStatus',
+
+  // ── ImagingStudy predicates (clinical: vocabulary) ──
+  imagingModality: 'clinical:imagingModality',
+  studyDescription: 'clinical:studyDescription',
+  numberOfSeries: 'clinical:numberOfSeries',
+  studyDate: 'clinical:studyDate',
+  dicomStudyUid: 'clinical:dicomStudyUid',
+  retrieveUrl: 'clinical:retrieveUrl',
+
+  // ── Coverage v1.3 — ClaimRecord predicates ──
+  claimDate: 'coverage:claimDate',
+  claimTotal: 'coverage:claimTotal',
+  claimStatus: 'coverage:claimStatus',
+  claimType: 'coverage:claimType',
+  billingProvider: 'coverage:billingProvider',
+
+  // ── Coverage v1.3 — BenefitStatement predicates ──
+  adjudicationDate: 'coverage:adjudicationDate',
+  adjudicationStatus: 'coverage:adjudicationStatus',
+  outcomeCode: 'coverage:outcomeCode',
+  denialReason: 'coverage:denialReason',
+  totalBilled: 'coverage:totalBilled',
+  totalAllowed: 'coverage:totalAllowed',
+  totalPaid: 'coverage:totalPaid',
+  patientResponsibility: 'coverage:patientResponsibility',
+  relatedClaim: 'coverage:relatedClaim',
+
+  // ── Coverage v1.3 — DenialNotice predicates ──
+  deniedProcedureCode: 'coverage:deniedProcedureCode',
+  denialReasonCode: 'coverage:denialReasonCode',
+  denialLetterDate: 'coverage:denialLetterDate',
+  appealDeadline: 'coverage:appealDeadline',
+  coveragePolicyReference: 'coverage:coveragePolicyReference',
+
+  // ── Coverage v1.3 — AppealRecord predicates ──
+  appealLevel: 'coverage:appealLevel',
+  appealFiledDate: 'coverage:appealFiledDate',
+  appealOutcome: 'coverage:appealOutcome',
+  appealOutcomeDate: 'coverage:appealOutcomeDate',
+
+  // ── Core v2.8 — FHIR passthrough predicates ──
+  layerPromotionStatus: 'cascade:layerPromotionStatus',
+  fhirJson: 'cascade:fhirJson',
+  sourceRecordDate: 'cascade:sourceRecordDate',
 
   // ── Core predicates (cascade: vocabulary) ──
   dataProvenance: 'cascade:dataProvenance',
