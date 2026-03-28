@@ -121,3 +121,15 @@ export { applyConsent, clinicalOnlyPolicy, fullAccessPolicy, noAccessPolicy, typ
 // ─── Validator ───────────────────────────────────────────────────────────────
 
 export { validate, validateAll, type ValidationError, type ValidationResult } from './validator/index.js';
+
+// ─── Deterministic URI Utilities ─────────────────────────────────────────────
+
+export {
+  contentHashedUri,
+  patientUri,
+  immunizationUri,
+  observationUri,
+  conditionUri,
+  allergyUri,
+  medicationUri,
+} from './utils/deterministic-uri.js';
