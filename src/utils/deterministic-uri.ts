@@ -27,7 +27,7 @@ import { createHash, randomUUID } from 'node:crypto';
  *
  * @internal
  */
-function deterministicUuid(input: string): string {
+export function deterministicUuid(input: string): string {
   const hash = createHash('sha1').update(input).digest('hex');
   const v = ((parseInt(hash.slice(16, 18), 16) & 0x3f) | 0x80)
     .toString(16)

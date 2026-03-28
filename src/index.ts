@@ -125,6 +125,7 @@ export { validate, validateAll, type ValidationError, type ValidationResult } fr
 // ─── Deterministic URI Utilities ─────────────────────────────────────────────
 
 export {
+  deterministicUuid,
   contentHashedUri,
   patientUri,
   immunizationUri,

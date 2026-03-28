@@ -9,7 +9,11 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { join, dirname } from 'node:path';
 import {
+  deterministicUuid,
   contentHashedUri,
   patientUri,
   immunizationUri,
@@ -147,4 +151,35 @@ describe('typed helper functions', () => {
     const fields = { rxNormCode: '723', startDate: '2022-01-15', patient: 'urn:uuid:p1' };
     expect(medicationUri(fields)).toBe(medicationUri(fields));
   });
+});
+
+// ─── Conformance Fixture Tests (REC-1) ───────────────────────────────────────
+
+describe('conformance fixtures — cross-SDK test vectors', () => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const fixturesPath = join(__dirname, '../../conformance/fixtures/deterministic-ids/test-vectors.json');
+  const fixtures = JSON.parse(readFileSync(fixturesPath, 'utf-8')) as {
+    primitiveVectors: Array<{ label: string; input: string; expectedUuid: string }>;
+    contentHashedUriVectors: Array<{ label: string; identityString: string; expectedUri: string }>;
+  };
+
+  for (const vector of fixtures.primitiveVectors) {
+    it(`primitiveVector: ${vector.label}`, () => {
+      expect(deterministicUuid(vector.input)).toBe(vector.expectedUuid);
+    });
+  }
+
+  for (const vector of fixtures.contentHashedUriVectors) {
+    it(`contentHashedUriVector: ${vector.label}`, () => {
+      // Parse identity string: "ResourceType::key=val|key=val" or "ResourceType:fallbackId"
+      const [resourceType, fieldsPart] = vector.identityString.split('::');
+      const fields: Record<string, string> = {};
+      for (const pair of fieldsPart.split('|')) {
+        const eqIdx = pair.indexOf('=');
+        fields[pair.slice(0, eqIdx)] = pair.slice(eqIdx + 1);
+      }
+      expect(contentHashedUri(resourceType, fields)).toBe(vector.expectedUri);
+    });
+  }
 });
