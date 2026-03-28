@@ -9,7 +9,7 @@
  *
  * Algorithm: CDP-UUID (Cascade Protocol Deterministic UUID)
  * Input format: "{resourceType}::{sortedKeyValuePairs}"
- * Cross-SDK test vector: deterministicUuid("hello") === "aaf4c61d-dcc5-5e8a-adab-ede0f3b482cd"
+ * Cross-SDK test vector: deterministicUuid("hello") === "aaf4c61d-dcc5-58a2-9abe-de0f3b482cd9"
  *
  * @see https://cascadeprotocol.org/docs/cascade-protocol-schemas
  */

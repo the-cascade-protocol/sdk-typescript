@@ -5,7 +5,7 @@
  * checks the behaviour of contentHashedUri() and the typed helper functions.
  *
  * Cross-SDK test vector (must match cascade-cli, Swift SDK, Python SDK):
- *   deterministicUuid("hello") === "aaf4c61d-dcc5-5e8a-adab-ede0f3b482cd"
+ *   deterministicUuid("hello") === "aaf4c61d-dcc5-58a2-9abe-de0f3b482cd9"
  */
 
 import { describe, it, expect } from 'vitest';
