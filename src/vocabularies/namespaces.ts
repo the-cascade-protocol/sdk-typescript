@@ -137,9 +137,9 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
     namePred: 'clinical:supplementName',
   },
   procedures: {
-    rdfType: 'clinical:Procedure',
+    rdfType: 'health:ProcedureRecord',
     nameKey: 'procedureName',
-    namePred: 'clinical:procedureName',
+    namePred: 'health:procedureName',
   },
   encounters: {
     rdfType: 'clinical:Encounter',
@@ -391,10 +391,10 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   familyName: 'foaf:familyName',
   bloodType: 'health:bloodType',
 
-  // ── Procedure predicates (clinical: vocabulary — EHR-sourced) ──
-  procedureName: 'clinical:procedureName',
-  cptCode: 'clinical:cptCode',
-  procedureStatus: 'clinical:procedureStatus',
+  // ── Procedure predicates (health: vocabulary) ──
+  procedureName: 'health:procedureName',
+  cptCode: 'health:cptCode',
+  procedureStatus: 'health:procedureStatus',
   performer: 'health:performer',
   location: 'health:location',
 

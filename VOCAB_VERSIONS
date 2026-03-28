@@ -9,3 +9,4 @@ coverage=1.3
 checkup=3.2
 pots=1.4
 # coverage=1.3: ClaimRecord, BenefitStatement, DenialNotice, AppealRecord interfaces added
+# health=2.3: ProcedureRecord rdfType and predicates corrected from clinical: to health: namespace (REC-5)
