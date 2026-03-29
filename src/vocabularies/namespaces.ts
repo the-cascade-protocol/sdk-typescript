@@ -216,6 +216,26 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
     nameKey: 'vitalType',
     namePred: 'clinical:vitalType',
   },
+  'clinical-social-history': {
+    rdfType: 'clinical:SocialHistoryRecord',
+    nameKey: 'socialHistoryCategory',
+    namePred: 'clinical:socialHistoryCategory',
+  },
+  'ai-extraction-activities': {
+    rdfType: 'cascade:AIExtractionActivity',
+    nameKey: 'extractionModel',
+    namePred: 'cascade:extractionModel',
+  },
+  'ai-discarded-extractions': {
+    rdfType: 'cascade:AIDiscardedExtraction',
+    nameKey: 'discardReason',
+    namePred: 'cascade:discardReason',
+  },
+  'social-history-consents': {
+    rdfType: 'cascade:SocialHistoryConsent',
+    nameKey: 'consentScope',
+    namePred: 'cascade:consentScope',
+  },
 } as const;
 
 // ─── Record Type to Mapping Key ─────────────────────────────────────────────
@@ -252,6 +272,10 @@ export const TYPE_TO_MAPPING_KEY: Record<string, string> = {
   PatientProfile: 'patient-profile',
   ActivitySnapshot: 'activity',
   SleepSnapshot: 'sleep',
+  ClinicalSocialHistoryRecord: 'clinical-social-history',
+  AIExtractionActivity: 'ai-extraction-activities',
+  AIDiscardedExtraction: 'ai-discarded-extractions',
+  SocialHistoryConsent: 'social-history-consents',
 };
 
 // ─── Schema Version ──────────────────────────────────────────────────────────

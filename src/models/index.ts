@@ -59,3 +59,13 @@ export type { SleepSnapshot } from './sleep-snapshot.js';
 
 // Aggregate health profile
 export type { HealthProfile } from './health-profile.js';
+
+// Clinical social history (EHR-extracted, clinical v1.8)
+export type { ClinicalSocialHistoryRecord, SocialHistoryCategory } from './social-history-clinical.js';
+
+// AI extraction provenance (core v3.0)
+export type {
+  AIExtractionActivity,
+  AIDiscardedExtraction,
+  SocialHistoryConsent,
+} from './ai-extraction.js';
