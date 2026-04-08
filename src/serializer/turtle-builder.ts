@@ -13,9 +13,9 @@
  *   .prefix('cascade', 'https://ns.cascadeprotocol.org/core/v1#')
  *   .prefix('health', 'https://ns.cascadeprotocol.org/health/v1#')
  *   .subject('<urn:uuid:abc>')
- *     .type('health:MedicationRecord')
- *     .literal('health:medicationName', 'Lisinopril')
- *     .boolean('health:isActive', true)
+ *     .type('clinical:Medication')
+ *     .literal('clinical:drugName', 'Lisinopril')
+ *     .boolean('clinical:status', true)
  *     .done()
  *   .build();
  * ```

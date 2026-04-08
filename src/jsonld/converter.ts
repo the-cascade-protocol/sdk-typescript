@@ -34,7 +34,7 @@ const REVERSE_PREDICATE_MAP = buildReversePredicateMap();
  * import { toJsonLd } from '@the-cascade-protocol/sdk';
  *
  * const jsonld = toJsonLd(myMedication);
- * // { "@context": "https://...", "@id": "urn:uuid:...", "@type": "health:MedicationRecord", ... }
+ * // { "@context": "https://...", "@id": "urn:uuid:...", "@type": "clinical:Medication", ... }
  * ```
  */
 export function toJsonLd(record: CascadeRecord): object {
@@ -121,7 +121,26 @@ export function fromJsonLd<T extends CascadeRecord>(doc: object): T {
     }
   }
 
-  record['type'] = typeName;
+  // Resolve to canonical TypeScript type name.
+  // When the RDF local name differs from the TypeScript type name
+  // (e.g., RDF 'clinical:Medication' -> TypeScript 'MedicationRecord'),
+  // find the first TYPE_TO_MAPPING_KEY entry whose mapping's rdfType
+  // has this local name, and use that entry's key as the type.
+  let resolvedType = typeName;
+  for (const [tsType, mappingKey] of Object.entries(TYPE_TO_MAPPING_KEY)) {
+    const mapping = TYPE_MAPPING[mappingKey];
+    if (mapping) {
+      const mColonIdx = mapping.rdfType.indexOf(':');
+      if (mColonIdx >= 0) {
+        const mLocal = mapping.rdfType.slice(mColonIdx + 1);
+        if (mLocal === typeName) {
+          resolvedType = tsType;
+          break;
+        }
+      }
+    }
+  }
+  record['type'] = resolvedType;
 
   // Map all other properties
   for (const [key, value] of Object.entries(raw)) {

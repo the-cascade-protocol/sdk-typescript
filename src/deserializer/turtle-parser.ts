@@ -18,7 +18,7 @@
  * @module deserializer
  */
 
-import { NAMESPACES, TYPE_MAPPING, buildReversePredicateMap } from '../vocabularies/namespaces.js';
+import { NAMESPACES, TYPE_MAPPING, TYPE_TO_MAPPING_KEY, buildReversePredicateMap } from '../vocabularies/namespaces.js';
 import type { CascadeRecord } from '../models/common.js';
 
 // ─── Internal Types ─────────────────────────────────────────────────────────
@@ -53,7 +53,6 @@ const ADDITIONAL_REVERSE_MAPPINGS: Record<string, string> = {
   // ensure both namespace variants deserialize to the same JSON key.
   [`${NAMESPACES.clinical}performedDate`]: 'performedDate',
   [`${NAMESPACES.clinical}sourceRecordId`]: 'sourceRecordId',
-  [`${NAMESPACES.clinical}status`]: 'status',
   [`${NAMESPACES.clinical}notes`]: 'notes',
 };
 
@@ -62,6 +61,22 @@ const REVERSE_PREDICATE_MAP = buildReversePredicateMap(ADDITIONAL_REVERSE_MAPPIN
 /**
  * Build a reverse mapping from RDF type URI to record type string.
  */
+/**
+ * Build a reverse mapping from mapping key to the canonical TypeScript type name.
+ * Uses the first entry in TYPE_TO_MAPPING_KEY that maps to each mapping key.
+ */
+function buildMappingKeyToTypeName(): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const [typeName, mappingKey] of Object.entries(TYPE_TO_MAPPING_KEY)) {
+    if (!map.has(mappingKey)) {
+      map.set(mappingKey, typeName);
+    }
+  }
+  return map;
+}
+
+const MAPPING_KEY_TO_TYPE_NAME = buildMappingKeyToTypeName();
+
 function buildReverseTypeMap(): Map<string, { recordType: string; mappingKey: string }> {
   const reverseMap = new Map<string, { recordType: string; mappingKey: string }>();
   for (const [key, mapping] of Object.entries(TYPE_MAPPING)) {
@@ -71,7 +86,9 @@ function buildReverseTypeMap(): Map<string, { recordType: string; mappingKey: st
       const localName = mapping.rdfType.slice(colonIdx + 1);
       const nsUri = NAMESPACES[nsPrefix as keyof typeof NAMESPACES];
       if (nsUri) {
-        reverseMap.set(`${nsUri}${localName}`, { recordType: localName, mappingKey: key });
+        // Use the canonical TypeScript type name if available, otherwise fall back to localName
+        const recordType = MAPPING_KEY_TO_TYPE_NAME.get(key) ?? localName;
+        reverseMap.set(`${nsUri}${localName}`, { recordType, mappingKey: key });
       }
     }
   }
@@ -785,7 +802,23 @@ const RDF_TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
  * RDF type URI used in Turtle.
  */
 function resolveTypeUri(type: string): string | null {
-  // Try direct match in TYPE_MAPPING values
+  // Try via TYPE_TO_MAPPING_KEY first (handles cases where the TypeScript
+  // type name differs from the RDF local name, e.g. 'MedicationRecord' -> 'clinical:Medication')
+  const mappingKey = TYPE_TO_MAPPING_KEY[type];
+  if (mappingKey) {
+    const mapping = TYPE_MAPPING[mappingKey];
+    if (mapping) {
+      const colonIdx = mapping.rdfType.indexOf(':');
+      if (colonIdx >= 0) {
+        const nsPrefix = mapping.rdfType.slice(0, colonIdx);
+        const localName = mapping.rdfType.slice(colonIdx + 1);
+        const nsUri = NAMESPACES[nsPrefix as keyof typeof NAMESPACES];
+        if (nsUri) return `${nsUri}${localName}`;
+      }
+    }
+  }
+
+  // Fallback: try direct match in TYPE_MAPPING values by RDF local name
   for (const mapping of Object.values(TYPE_MAPPING)) {
     const colonIdx = mapping.rdfType.indexOf(':');
     if (colonIdx >= 0) {

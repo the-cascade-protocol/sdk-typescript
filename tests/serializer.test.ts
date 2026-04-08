@@ -85,7 +85,7 @@ describe('Turtle Serializer', () => {
           // shacl-valid: verify non-empty and contains expected prefixes
           expect(result.length).toBeGreaterThan(0);
           expect(result).toContain('@prefix');
-          expect(result).toContain('health:MedicationRecord');
+          expect(result).toContain('clinical:Medication');
         }
       });
     }
@@ -270,12 +270,12 @@ describe('Turtle Serializer', () => {
       expect(result).toContain('@prefix cascade:');
       expect(result).toContain('@prefix health:');
       expect(result).toContain('@prefix xsd:');
-      expect(result).toContain('health:medicationName "Lisinopril"');
-      expect(result).toContain('health:isActive true');
+      expect(result).toContain('clinical:drugName "Lisinopril"');
+      expect(result).toContain('clinical:status true');
       expect(result).toContain('cascade:dataProvenance cascade:ClinicalGenerated');
-      expect(result).toContain('health:dose "20 mg"');
+      expect(result).toContain('clinical:dosage "20 mg"');
       expect(result).toContain('health:startDate "2024-06-15T00:00:00Z"^^xsd:dateTime');
-      expect(result).toContain('health:rxNormCode <http://www.nlm.nih.gov/research/umls/rxnorm/197884>');
+      expect(result).toContain('clinical:rxNormCode <http://www.nlm.nih.gov/research/umls/rxnorm/197884>');
     });
 
     it('vital-001: serializes vital sign with LOINC URI containing # character', () => {

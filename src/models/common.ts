@@ -277,7 +277,7 @@ export type ProcedureStatus =
  * fields are available for traceability.
  *
  * - `id` maps to the RDF subject URI (e.g., `urn:uuid:...`)
- * - `type` maps to `rdf:type` (e.g., `health:MedicationRecord`)
+ * - `type` maps to `rdf:type` (e.g., `clinical:Medication`)
  * - `dataProvenance` maps to `cascade:dataProvenance`
  * - `schemaVersion` maps to `cascade:schemaVersion`
  */

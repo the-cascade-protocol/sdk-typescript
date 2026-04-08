@@ -170,7 +170,7 @@ describe('JSON-LD Conversion', () => {
       };
 
       const result = toJsonLd(med) as Record<string, unknown>;
-      expect(result['@type']).toBe('health:MedicationRecord');
+      expect(result['@type']).toBe('clinical:Medication');
     });
 
     it('type URIs are correctly expanded for VitalSign', () => {
@@ -250,7 +250,7 @@ describe('JSON-LD Conversion', () => {
     it('fromJsonLd handles missing @id gracefully', () => {
       const doc = {
         '@context': CONTEXT_URI,
-        '@type': 'health:MedicationRecord',
+        '@type': 'clinical:Medication',
         medicationName: 'Test',
       };
 

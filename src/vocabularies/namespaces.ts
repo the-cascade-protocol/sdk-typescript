@@ -69,6 +69,15 @@ export const NAMESPACES = {
   /** FOAF (Friend of a Friend) namespace for personal info. */
   foaf: 'http://xmlns.com/foaf/0.1/',
 
+  /** vCard namespace for contact information. */
+  vcard: 'http://www.w3.org/2006/vcard/ns#',
+
+  /** Solid Terms namespace for WebID profile discovery. */
+  solid: 'http://www.w3.org/ns/solid/terms#',
+
+  /** Personal Information Management (PIM) namespace for Solid storage discovery. */
+  pim: 'http://www.w3.org/ns/pim/space#',
+
   /** Linked Data Platform namespace. */
   ldp: 'http://www.w3.org/ns/ldp#',
 
@@ -97,14 +106,14 @@ export type NamespacePrefix = keyof typeof NAMESPACES;
  * import { TYPE_MAPPING } from '@the-cascade-protocol/sdk';
  *
  * const medType = TYPE_MAPPING.medications;
- * // { rdfType: 'health:MedicationRecord', nameKey: 'medicationName', namePred: 'health:medicationName' }
+ * // { rdfType: 'clinical:Medication', nameKey: 'medicationName', namePred: 'clinical:drugName' }
  * ```
  */
 export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; namePred: string }> = {
   medications: {
-    rdfType: 'health:MedicationRecord',
+    rdfType: 'clinical:Medication',
     nameKey: 'medicationName',
-    namePred: 'health:medicationName',
+    namePred: 'clinical:drugName',
   },
   conditions: {
     rdfType: 'health:ConditionRecord',
@@ -149,7 +158,7 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
   'medication-administrations': {
     rdfType: 'clinical:MedicationAdministration',
     nameKey: 'medicationName',
-    namePred: 'health:medicationName',
+    namePred: 'clinical:drugName',
   },
   'implanted-devices': {
     rdfType: 'clinical:ImplantedDevice',
@@ -250,6 +259,7 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
  */
 export const TYPE_TO_MAPPING_KEY: Record<string, string> = {
   MedicationRecord: 'medications',
+  Medication: 'medications',
   ConditionRecord: 'conditions',
   AllergyRecord: 'allergies',
   LabResultRecord: 'lab-results',
@@ -300,20 +310,20 @@ export const CURRENT_SCHEMA_VERSION = '1.3';
  * ```typescript
  * import { PROPERTY_PREDICATES } from '@the-cascade-protocol/sdk';
  *
- * const pred = PROPERTY_PREDICATES.dose; // 'health:dose'
+ * const pred = PROPERTY_PREDICATES.dose; // 'clinical:dosage'
  * ```
  */
 export const PROPERTY_PREDICATES: Record<string, string> = {
-  // ── Medication predicates (health: vocabulary) ──
-  medicationName: 'health:medicationName',
-  dose: 'health:dose',
+  // ── Medication predicates (clinical: vocabulary) ──
+  medicationName: 'clinical:drugName',
+  dose: 'clinical:dosage',
   frequency: 'health:frequency',
   route: 'health:route',
   prescriber: 'health:prescriber',
   startDate: 'health:startDate',
   endDate: 'health:endDate',
-  isActive: 'health:isActive',
-  rxNormCode: 'health:rxNormCode',
+  isActive: 'clinical:status',
+  rxNormCode: 'clinical:rxNormCode',
   medicationClass: 'health:medicationClass',
   affectsVitalSigns: 'health:affectsVitalSigns',
 
@@ -403,9 +413,11 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   rxPcn: 'coverage:rxPcn',
   rxGroup: 'coverage:rxGroup',
 
-  // ── Patient profile predicates (cascade: and foaf: vocabularies) ──
+  // ── Patient profile predicates (cascade:, foaf:, and vcard: vocabularies) ──
   dateOfBirth: 'cascade:dateOfBirth',
   biologicalSex: 'cascade:biologicalSex',
+  contactPhone: 'vcard:hasTelephone',
+  contactEmail: 'vcard:hasEmail',
   computedAge: 'cascade:computedAge',
   ageGroup: 'cascade:ageGroup',
   genderIdentity: 'cascade:genderIdentity',

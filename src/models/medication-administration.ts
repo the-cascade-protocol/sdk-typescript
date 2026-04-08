@@ -24,7 +24,7 @@ import type { CascadeRecord } from './common.js';
 export interface MedicationAdministration extends CascadeRecord {
   type: 'MedicationAdministration';
 
-  /** Name of the medication administered. Maps to `health:medicationName`. */
+  /** Name of the medication administered. Maps to `clinical:drugName`. */
   medicationName: string;
 
   /** Date and time of administration (ISO 8601). Maps to `clinical:administeredDate`. */

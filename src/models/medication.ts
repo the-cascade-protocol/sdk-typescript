@@ -4,8 +4,8 @@
  * Represents a medication record with fields sourced from EHR imports,
  * FHIR MedicationRequest/MedicationStatement resources, or self-reported data.
  *
- * RDF type: `health:MedicationRecord`
- * Vocabulary: `https://ns.cascadeprotocol.org/health/v1#`
+ * RDF type: `clinical:Medication`
+ * Vocabulary: `https://ns.cascadeprotocol.org/clinical/v1#`
  *
  * @see https://cascadeprotocol.org/docs/cascade-protocol-schemas
  */
@@ -25,26 +25,26 @@ import type {
  * Required fields: `medicationName`, `isActive`, `dataProvenance`, `schemaVersion`.
  * All date fields use ISO 8601 string format.
  *
- * Serializes as `health:MedicationRecord` in Turtle.
+ * Serializes as `clinical:Medication` in Turtle.
  */
 export interface Medication extends CascadeRecord {
   type: 'MedicationRecord';
 
   /**
    * Name of the medication.
-   * Maps to `health:medicationName` in Turtle serialization.
+   * Maps to `clinical:drugName` in Turtle serialization.
    */
   medicationName: string;
 
   /**
    * Whether the medication is currently active.
-   * Maps to `health:isActive` in Turtle serialization.
+   * Maps to `clinical:status` in Turtle serialization.
    */
   isActive: boolean;
 
   /**
    * Prescribed dose (e.g., `"20 mg"`, `"90 mcg/actuation"`).
-   * Maps to `health:dose` in Turtle serialization.
+   * Maps to `clinical:dosage` in Turtle serialization.
    */
   dose?: string;
 
@@ -80,7 +80,7 @@ export interface Medication extends CascadeRecord {
 
   /**
    * RxNorm concept URI for this medication.
-   * Maps to `health:rxNormCode` in Turtle serialization as a URI reference.
+   * Maps to `clinical:rxNormCode` in Turtle serialization as a URI reference.
    */
   rxNormCode?: string;
 

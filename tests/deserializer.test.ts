@@ -310,14 +310,15 @@ describe('Turtle Deserializer', () => {
     it('correctly parses URIs with . characters (domain names)', () => {
       const turtle = `
 @prefix cascade: <https://ns.cascadeprotocol.org/core/v1#> .
+@prefix clinical: <https://ns.cascadeprotocol.org/clinical/v1#> .
 @prefix health: <https://ns.cascadeprotocol.org/health/v1#> .
 @prefix rxnorm: <http://www.nlm.nih.gov/research/umls/rxnorm/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<urn:uuid:med-test-001> a health:MedicationRecord ;
-    health:medicationName "Test Med" ;
-    health:isActive true ;
-    health:rxNormCode <http://www.nlm.nih.gov/research/umls/rxnorm/197884> ;
+<urn:uuid:med-test-001> a clinical:Medication ;
+    clinical:drugName "Test Med" ;
+    clinical:status true ;
+    clinical:rxNormCode <http://www.nlm.nih.gov/research/umls/rxnorm/197884> ;
     cascade:dataProvenance cascade:ClinicalGenerated ;
     cascade:schemaVersion "1.3" .
 `;
@@ -332,12 +333,13 @@ describe('Turtle Deserializer', () => {
       // Minimal Turtle without some prefix declarations
       const turtle = `
 @prefix cascade: <https://ns.cascadeprotocol.org/core/v1#> .
+@prefix clinical: <https://ns.cascadeprotocol.org/clinical/v1#> .
 @prefix health: <https://ns.cascadeprotocol.org/health/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<urn:uuid:med-minimal> a health:MedicationRecord ;
-    health:medicationName "Aspirin" ;
-    health:isActive true ;
+<urn:uuid:med-minimal> a clinical:Medication ;
+    clinical:drugName "Aspirin" ;
+    clinical:status true ;
     cascade:dataProvenance cascade:SelfReported ;
     cascade:schemaVersion "1.0" .
 `;
@@ -353,12 +355,13 @@ describe('Turtle Deserializer', () => {
     it('returns the first matching record', () => {
       const turtle = `
 @prefix cascade: <https://ns.cascadeprotocol.org/core/v1#> .
+@prefix clinical: <https://ns.cascadeprotocol.org/clinical/v1#> .
 @prefix health: <https://ns.cascadeprotocol.org/health/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<urn:uuid:med-one> a health:MedicationRecord ;
-    health:medicationName "TestMed" ;
-    health:isActive true ;
+<urn:uuid:med-one> a clinical:Medication ;
+    clinical:drugName "TestMed" ;
+    clinical:status true ;
     cascade:dataProvenance cascade:SelfReported ;
     cascade:schemaVersion "1.3" .
 `;

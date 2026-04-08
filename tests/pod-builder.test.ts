@@ -197,7 +197,7 @@ describe('Pod Builder', () => {
       expect(paths).toContain('index.ttl');
 
       const medFile = findFile(files, 'clinical/medications.ttl');
-      expect(medFile.content).toContain('health:MedicationRecord');
+      expect(medFile.content).toContain('clinical:Medication');
       expect(medFile.content).toContain('urn:uuid:test-med-1');
       expect(medFile.content).toContain('Aspirin');
     });
@@ -433,7 +433,7 @@ describe('Pod Builder', () => {
       const files = builder.build();
 
       const medFile = findFile(files, 'clinical/medications.ttl');
-      expect(medFile.content).toContain('health:MedicationRecord');
+      expect(medFile.content).toContain('clinical:Medication');
     });
 
     it('conditions go to clinical/conditions.ttl', () => {
@@ -689,9 +689,9 @@ describe('Pod Builder', () => {
       const cascadePrefixMatches = content.match(/@prefix cascade:/g);
       expect(cascadePrefixMatches).toHaveLength(1);
 
-      // health: prefix should also appear only once
-      const healthPrefixMatches = content.match(/@prefix health:/g);
-      expect(healthPrefixMatches).toHaveLength(1);
+      // clinical: prefix should also appear only once
+      const clinicalPrefixMatches = content.match(/@prefix clinical:/g);
+      expect(clinicalPrefixMatches).toHaveLength(1);
     });
 
     it('merges multiple conditions into a single file', () => {
