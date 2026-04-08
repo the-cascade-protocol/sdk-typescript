@@ -13,3 +13,4 @@ pots=1.4
 # core=3.0: AIExtractionActivity, AIDiscardedExtraction, SocialHistoryConsent interfaces added
 # clinical=1.8: ClinicalSocialHistoryRecord interface added (EHR-extracted, 42 CFR Part 2)
 # clinical=1.8: Medication RDF type and predicates migrated from health: to clinical: namespace
+# clinical=1.8: Medication RDF type and predicates migrated from health: to clinical: namespace
