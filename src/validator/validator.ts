@@ -61,6 +61,21 @@ const VALID_IMMUNIZATION_STATUSES: ReadonlySet<string> = new Set([
   'completed', 'entered-in-error', 'not-done',
 ]);
 
+// prov:Agent / prov:Activity classes — NOT cascade:HealthRecord subclasses, so
+// they carry no dataProvenance/schemaVersion. Required fields follow each SHACL
+// shape (e.g. ProxyAgentShape) instead.
+const AGENT_AND_ACTIVITY_TYPES: ReadonlySet<string> = new Set([
+  'ProxyAgent',
+  'AdvisoryApplicationActivity',
+  'AIGenerationActivity',
+]);
+
+const AGENT_ACTIVITY_REQUIRED_FIELDS: Readonly<Record<string, readonly string[]>> = {
+  ProxyAgent: ['actsForPatient', 'proxyRelationship', 'proxyGrantedAt'],
+  AIGenerationActivity: ['extractionModel', 'trigger'],
+  AdvisoryApplicationActivity: [],
+};
+
 // Types that should ideally have coding system references
 const CLINICAL_TYPES_WANTING_CODES: ReadonlySet<string> = new Set([
   'MedicationRecord',
@@ -106,6 +121,18 @@ function validateBase(record: CascadeRecord): ValidationError[] {
       message: `type "${record.type ?? ''}" is not a recognized DataType`,
       severity: 'error',
     });
+  }
+
+  // prov:Agent / prov:Activity classes are not data records: they carry no
+  // schemaVersion/dataProvenance. Validate their shape-required fields instead.
+  if (record.type && AGENT_AND_ACTIVITY_TYPES.has(record.type)) {
+    const rec: RecordFields = { ...record };
+    for (const field of AGENT_ACTIVITY_REQUIRED_FIELDS[record.type] ?? []) {
+      if (!hasField(rec, field)) {
+        errors.push({ field, message: `${record.type} requires ${field}`, severity: 'error' });
+      }
+    }
+    return errors;
   }
 
   // 3. schemaVersion must be present

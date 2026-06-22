@@ -638,4 +638,42 @@ describe('Validator', () => {
       }
     });
   });
+
+  // ── prov:Agent / prov:Activity classes ──────────────────────────────────
+  // These are not cascade:HealthRecord subclasses, so they carry no
+  // dataProvenance/schemaVersion; their required fields follow each SHACL shape.
+  describe('Agent and Activity types', () => {
+    const agentRecord = (extra: Record<string, unknown>) =>
+      ({ id: 'urn:cascade:test-agent-001', ...extra } as unknown as CascadeRecord);
+
+    it('a valid ProxyAgent passes without dataProvenance/schemaVersion', () => {
+      const result = validate(agentRecord({
+        type: 'ProxyAgent',
+        actsForPatient: 'urn:cascade:patient:child-001',
+        proxyRelationship: 'parent',
+        proxyGrantedAt: '2026-01-15T10:00:00Z',
+      }));
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('a ProxyAgent missing proxyRelationship fails', () => {
+      const result = validate(agentRecord({
+        type: 'ProxyAgent',
+        actsForPatient: 'urn:cascade:patient:child-001',
+        proxyGrantedAt: '2026-01-15T10:00:00Z',
+      }));
+      expect(result.valid).toBe(false);
+      expect(errorFields(result)).toContain('proxyRelationship');
+    });
+
+    it('a valid AIGenerationActivity passes', () => {
+      const result = validate(agentRecord({
+        type: 'AIGenerationActivity',
+        extractionModel: 'gemma-3.5-4b',
+        trigger: 'InitialGeneration',
+      }));
+      expect(result.valid).toBe(true);
+    });
+  });
 });

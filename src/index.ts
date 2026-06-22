@@ -55,6 +55,20 @@ export type { Procedure } from './models/procedure.js';
 export type { Encounter } from './models/encounter.js';
 export type { FamilyHistory } from './models/family-history.js';
 export type { Coverage } from './models/coverage.js';
+export type { MedicationAdministration } from './models/medication-administration.js';
+export type { ImplantedDevice } from './models/implanted-device.js';
+export type { ImagingStudy } from './models/imaging-study.js';
+export type { ClaimRecord, BenefitStatement, DenialNotice, AppealRecord } from './models/claim-record.js';
+
+// Clinical social history (EHR-extracted, clinical v1.8)
+export type { ClinicalSocialHistoryRecord, SocialHistoryCategory } from './models/social-history-clinical.js';
+
+// AI extraction provenance (core v3.0)
+export type {
+  AIExtractionActivity,
+  AIDiscardedExtraction,
+  SocialHistoryConsent,
+} from './models/ai-extraction.js';
 
 // Patient profile and nested types
 export type {
