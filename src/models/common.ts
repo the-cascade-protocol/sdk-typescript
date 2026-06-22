@@ -19,8 +19,12 @@
  * - `ClinicalGenerated` -- Data originating from clinical/EHR sources
  * - `DeviceGenerated` -- Data from wearable or medical devices
  * - `SelfReported` -- Patient-entered data
- * - `AIExtracted` -- AI-extracted from existing clinical documents
+ * - `AIExtracted` -- AI-extracted from existing clinical documents (grounded)
  * - `AIGenerated` -- AI-generated observations, analyses, or recommendations
+ * - `AIAsserted` -- Content surfaced by a general-purpose AI assistant in a
+ *   patient-directed conversation, NOT grounded in clinical sources. Must never
+ *   be confused with `AIExtracted` (grounded extraction) or `EHRVerified`.
+ *   Maps to `cascade:AIAsserted` (subClassOf `cascade:ConsumerGenerated`).
  * - `EHRVerified` -- Data verified against electronic health records
  */
 export type ProvenanceType =
@@ -29,6 +33,7 @@ export type ProvenanceType =
   | 'SelfReported'
   | 'AIExtracted'
   | 'AIGenerated'
+  | 'AIAsserted'
   | 'EHRVerified';
 
 /**

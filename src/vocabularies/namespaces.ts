@@ -245,6 +245,28 @@ export const TYPE_MAPPING: Record<string, { rdfType: string; nameKey: string; na
     nameKey: 'consentScope',
     namePred: 'cascade:consentScope',
   },
+  // Consumer-reported social history (health v2.4) — DISTINCT from the
+  // EHR-extracted clinical:SocialHistoryRecord ('clinical-social-history').
+  'social-history': {
+    rdfType: 'health:SocialHistoryRecord',
+    nameKey: 'smokingStatus',
+    namePred: 'health:smokingStatus',
+  },
+  'advisory-application-activities': {
+    rdfType: 'cascade:AdvisoryApplicationActivity',
+    nameKey: 'appliedTriplesCount',
+    namePred: 'cascade:appliedTriplesCount',
+  },
+  'ai-generation-activities': {
+    rdfType: 'cascade:AIGenerationActivity',
+    nameKey: 'extractionModel',
+    namePred: 'cascade:extractionModel',
+  },
+  'proxy-agents': {
+    rdfType: 'cascade:ProxyAgent',
+    nameKey: 'proxyWebID',
+    namePred: 'cascade:proxyWebID',
+  },
 } as const;
 
 // ─── Record Type to Mapping Key ─────────────────────────────────────────────
@@ -286,6 +308,10 @@ export const TYPE_TO_MAPPING_KEY: Record<string, string> = {
   AIExtractionActivity: 'ai-extraction-activities',
   AIDiscardedExtraction: 'ai-discarded-extractions',
   SocialHistoryConsent: 'social-history-consents',
+  SocialHistoryRecord: 'social-history',
+  AdvisoryApplicationActivity: 'advisory-application-activities',
+  AIGenerationActivity: 'ai-generation-activities',
+  ProxyAgent: 'proxy-agents',
 };
 
 // ─── Schema Version ──────────────────────────────────────────────────────────
@@ -519,6 +545,37 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   layerPromotionStatus: 'cascade:layerPromotionStatus',
   fhirJson: 'cascade:fhirJson',
   sourceRecordDate: 'cascade:sourceRecordDate',
+
+  // ── Health v2.4 — SocialHistoryRecord predicates (consumer-reported) ──
+  // DISTINCT from the EHR-extracted clinical:SocialHistoryRecord above.
+  smokingStatus: 'health:smokingStatus',
+  alcoholUse: 'health:alcoholUse',
+  exerciseFrequency: 'health:exerciseFrequency',
+  occupationalExposure: 'health:occupationalExposure',
+
+  // ── Core v3.1 — AIGenerationActivity predicates (cascade: vocabulary) ──
+  // extractionModel / extractionConfidence / sourceNarrativeSection /
+  // requiresUserReview are reused from AIExtractionActivity (declared below).
+  promptVersion: 'cascade:promptVersion',
+  generationTemperature: 'cascade:generationTemperature',
+  trigger: 'cascade:trigger',
+
+  // ── Core v3.2 — AdvisoryApplicationActivity predicates ──
+  appliedTriplesCount: 'cascade:appliedTriplesCount',
+
+  // ── Core v3.3 — ProxyAgent predicates (caregiver-proxy) ──
+  actsForPatient: 'cascade:actsForPatient',
+  proxyWebID: 'cascade:proxyWebID',
+  proxyRelationship: 'cascade:proxyRelationship',
+  proxyScope: 'cascade:proxyScope',
+  proxyGrantedAt: 'cascade:proxyGrantedAt',
+  proxyRevokedAt: 'cascade:proxyRevokedAt',
+
+  // ── AI extraction/generation shared predicates (cascade: vocabulary) ──
+  extractionModel: 'cascade:extractionModel',
+  extractionConfidence: 'cascade:extractionConfidence',
+  sourceNarrativeSection: 'cascade:sourceNarrativeSection',
+  requiresUserReview: 'cascade:requiresUserReview',
 
   // ── Core predicates (cascade: vocabulary) ──
   dataProvenance: 'cascade:dataProvenance',

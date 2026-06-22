@@ -23,6 +23,7 @@ const VALID_PROVENANCE_TYPES: ReadonlySet<string> = new Set<ProvenanceType>([
   'SelfReported',
   'AIExtracted',
   'AIGenerated',
+  'AIAsserted',
   'EHRVerified',
 ]);
 
@@ -40,6 +41,10 @@ const RECOGNIZED_DATA_TYPES: ReadonlySet<string> = new Set([
   'PatientProfile',
   'ActivitySnapshot',
   'SleepSnapshot',
+  'SocialHistoryRecord',
+  'AdvisoryApplicationActivity',
+  'AIGenerationActivity',
+  'ProxyAgent',
 ]);
 
 const VALID_CONDITION_STATUSES: ReadonlySet<string> = new Set([

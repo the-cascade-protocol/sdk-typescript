@@ -69,3 +69,15 @@ export type {
   AIDiscardedExtraction,
   SocialHistoryConsent,
 } from './ai-extraction.js';
+
+// Consumer-reported social history (health v2.4)
+// DISTINCT from ClinicalSocialHistoryRecord (EHR-extracted, clinical v1.8)
+export type { SocialHistoryRecord } from './social-history.js';
+
+// Advisory application + AI generation provenance, caregiver-proxy (core v3.1–v3.3)
+export type {
+  AdvisoryApplicationActivity,
+  AIGenerationActivity,
+  ProxyAgent,
+  GenerationTrigger,
+} from './advisory-generation.js';

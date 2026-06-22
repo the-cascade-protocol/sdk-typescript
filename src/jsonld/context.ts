@@ -60,6 +60,7 @@ export function getContext(): object {
     'startDate', 'endDate', 'onsetDate', 'performedDate', 'reportedDate',
     'administrationDate', 'effectiveDate', 'effectivePeriodStart', 'effectivePeriodEnd',
     'effectiveStart', 'effectiveEnd',
+    'proxyGrantedAt', 'proxyRevokedAt',
   ]);
 
   // Fields that need xsd:date typing
@@ -73,6 +74,12 @@ export function getContext(): object {
     'computedAge', 'refillsAllowed', 'supplyDurationDays', 'onsetAge',
     'steps', 'activeMinutes', 'calories', 'awakenings',
     'totalSleepMinutes', 'deepSleepMinutes', 'remSleepMinutes', 'lightSleepMinutes',
+    'appliedTriplesCount',
+  ]);
+
+  // Fields that need xsd:decimal/double typing
+  const decimalFields = new Set([
+    'generationTemperature',
   ]);
 
   // Fields that are URI references
@@ -91,6 +98,8 @@ export function getContext(): object {
       context[key] = { '@id': pred, '@type': 'xsd:boolean' };
     } else if (integerFields.has(key)) {
       context[key] = { '@id': pred, '@type': 'xsd:integer' };
+    } else if (decimalFields.has(key)) {
+      context[key] = { '@id': pred, '@type': 'xsd:decimal' };
     } else if (uriRefFields.has(key)) {
       context[key] = { '@id': pred, '@type': '@id' };
     } else {
