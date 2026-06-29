@@ -160,3 +160,12 @@ export {
   allergyUri,
   medicationUri,
 } from './utils/deterministic-uri.js';
+
+// ─── Medication Normalization ─────────────────────────────────────────────────
+
+export {
+  normalizeMedName,
+  normalizeDose,
+  normalizeFrequency,
+  normalizeRoute,
+} from './utils/medication-normalize.js';
