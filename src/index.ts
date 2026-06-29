@@ -169,3 +169,19 @@ export {
   normalizeFrequency,
   normalizeRoute,
 } from './utils/medication-normalize.js';
+
+// ─── Code-System Identification + Medication Code Ladder ──────────────────────
+
+export {
+  classifyCodeSystem,
+  extractCodeValue,
+  codeRefsFromUris,
+  medicationCodeKeys,
+  strongestMedicationCodeKey,
+  sharedMedicationCodeKey,
+  MEDICATION_CODE_TIER,
+  MEDICATION_NAME_TIER,
+  type CodeSystem,
+  type CodeRef,
+  type CodeKey,
+} from './utils/code-keys.js';
