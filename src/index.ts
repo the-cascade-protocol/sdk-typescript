@@ -160,3 +160,50 @@ export {
   allergyUri,
   medicationUri,
 } from './utils/deterministic-uri.js';
+
+// ─── Medication Normalization ─────────────────────────────────────────────────
+
+export {
+  normalizeMedName,
+  normalizeDose,
+  normalizeFrequency,
+  normalizeRoute,
+  type DrugNameNormalizer,
+} from './utils/medication-normalize.js';
+
+// ─── Clinical Terminology Resolver (brand/generic + lay synonym + name->code) ──
+
+export {
+  createTerminologyResolver,
+  cascadeTerminologyResolver,
+  identityTerminologyResolver,
+  CASCADE_TERMINOLOGY_VERSION,
+  type TerminologyResolver,
+  type TerminologyAsset,
+  type ConceptCode,
+} from './utils/terminology.js';
+
+// ─── Code-System Identification + Medication Code Ladder ──────────────────────
+
+export {
+  classifyCodeSystem,
+  extractCodeValue,
+  codeRefsFromUris,
+  medicationCodeKeys,
+  strongestMedicationCodeKey,
+  sharedMedicationCodeKey,
+  MEDICATION_CODE_TIER,
+  MEDICATION_NAME_TIER,
+  type CodeSystem,
+  type CodeRef,
+  type CodeKey,
+} from './utils/code-keys.js';
+
+// ─── Shared Code-Keyed Fact Index (slice-4) ───────────────────────────────────
+
+export {
+  InMemoryFactIndex,
+  type FactIndex,
+  type IndexableFact,
+  type FactQuery,
+} from './utils/fact-index.js';

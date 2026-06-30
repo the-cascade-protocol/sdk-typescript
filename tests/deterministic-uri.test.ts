@@ -151,6 +151,34 @@ describe('typed helper functions', () => {
     const fields = { rxNormCode: '723', startDate: '2022-01-15', patient: 'urn:uuid:p1' };
     expect(medicationUri(fields)).toBe(medicationUri(fields));
   });
+
+  it('medicationUri keys on rxNorm + normalizedName + startDate + patient (matches the conformance vector)', () => {
+    expect(
+      medicationUri({
+        rxNormCode: '29046',
+        normalizedName: 'lisinopril',
+        startDate: '2020-04-01',
+        patient: 'urn:uuid:patient-smith',
+      }),
+    ).toBe('urn:uuid:f181c773-4c66-5cd3-96d7-5ff69c472fea');
+  });
+
+  it('medicationUri keys on normalizedName + startDate + patient when RxNorm is absent', () => {
+    expect(
+      medicationUri({
+        normalizedName: 'metformin',
+        startDate: '2019-06-01',
+        patient: 'urn:uuid:patient-smith',
+      }),
+    ).toBe('urn:uuid:d4db9260-e8d8-59ab-aea9-ee09974cd9fd');
+  });
+
+  it('medicationUri excludes dose from identity (two doses of the same drug share a URI)', () => {
+    const base = { rxNormCode: '29046', normalizedName: 'lisinopril', startDate: '2020-04-01', patient: 'urn:uuid:p1' };
+    // dose is not a parameter, so it cannot affect the URI — a dose change is a
+    // conflict on the same identity, not a new record.
+    expect(medicationUri(base)).toBe(medicationUri({ ...base }));
+  });
 });
 
 // ─── Conformance Fixture Tests (REC-1) ───────────────────────────────────────
