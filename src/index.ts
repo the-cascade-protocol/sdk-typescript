@@ -168,7 +168,20 @@ export {
   normalizeDose,
   normalizeFrequency,
   normalizeRoute,
+  type DrugNameNormalizer,
 } from './utils/medication-normalize.js';
+
+// ─── Clinical Terminology Resolver (brand/generic + lay synonym + name->code) ──
+
+export {
+  createTerminologyResolver,
+  cascadeTerminologyResolver,
+  identityTerminologyResolver,
+  CASCADE_TERMINOLOGY_VERSION,
+  type TerminologyResolver,
+  type TerminologyAsset,
+  type ConceptCode,
+} from './utils/terminology.js';
 
 // ─── Code-System Identification + Medication Code Ladder ──────────────────────
 

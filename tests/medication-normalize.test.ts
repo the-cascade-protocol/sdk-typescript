@@ -13,6 +13,7 @@ import {
   normalizeDose,
   normalizeFrequency,
   normalizeRoute,
+  type DrugNameNormalizer,
 } from '../src/utils/medication-normalize.js';
 
 // ─── normalizeMedName (CLI parity) ────────────────────────────────────────────
@@ -60,6 +61,17 @@ describe('normalizeMedName', () => {
 
   it('handles empty input', () => {
     expect(normalizeMedName('')).toBe('');
+  });
+
+  it('resolves brand to generic when a resolver is injected', () => {
+    const resolver: DrugNameNormalizer = {
+      toGeneric: (s) => (s === 'zyrtec' ? 'cetirizine' : undefined),
+    };
+    // Brand (with dose/form) and generic both normalize to the generic.
+    expect(normalizeMedName('Zyrtec 10 mg Oral Tablet', resolver)).toBe('cetirizine');
+    expect(normalizeMedName('cetirizine', resolver)).toBe('cetirizine');
+    // Without the resolver, behaviour is unchanged (asset-free baseline).
+    expect(normalizeMedName('Zyrtec 10 mg')).toBe('zyrtec');
   });
 });
 

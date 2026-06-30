@@ -23,14 +23,29 @@
 // ─── Medication name ─────────────────────────────────────────────────────────
 
 /**
+ * The minimal brand-to-generic capability {@link normalizeMedName} consumes — a
+ * structural subset of the SDK's `TerminologyResolver`, so the normalizer stays
+ * dependency-free and any object with `toGeneric` can be injected. Degrades to
+ * identity when absent (Checkup's injectable-DrugNameNormalizer contract).
+ */
+export interface DrugNameNormalizer {
+  /** Canonical generic name for a brand/surface form, else undefined. */
+  toGeneric(surfaceForm: string): string | undefined;
+}
+
+/**
  * Canonicalize a medication name for identity matching.
  *
  * Lowercases, strips embedded dose/unit tokens (`10 mg`, `90 mcg`, `5 %`, `200
  * units`, `40 meq`) and form/route tokens (`oral`, `tablet`, `capsule`, `er`,
  * `xr`, ...), and collapses whitespace. The result is the match-identity form,
- * NOT a display name. Brand-to-generic resolution is deliberately out of scope
- * here; it is layered on by an injectable terminology resolver (S2) so this
- * function stays a pure, deterministic, asset-free baseline.
+ * NOT a display name.
+ *
+ * When a `resolver` is injected, the stripped name is mapped brand-to-generic
+ * (`"Zyrtec 10 mg"` -> `"zyrtec"` -> `"cetirizine"`) so a brand and its generic
+ * share one identity. WITHOUT a resolver the behaviour is unchanged (asset-free
+ * baseline), so the reconciler and grounder stay deterministic and testable
+ * without the terminology asset.
  *
  * Note: dose tokens are intentionally stripped from the *name* so "Lisinopril
  * 10 mg" and "Lisinopril 20 mg" share an identity. The dose difference is a
@@ -39,12 +54,14 @@
  *
  * @example
  * normalizeMedName('Lisinopril 10 mg Oral Tablet') // => 'lisinopril'
+ * normalizeMedName('Zyrtec', resolver)             // => 'cetirizine'
  */
-export function normalizeMedName(name: string): string {
-  return name.toLowerCase()
+export function normalizeMedName(name: string, resolver?: DrugNameNormalizer): string {
+  const base = name.toLowerCase()
     .replace(/\d+(\.\d+)?\s*(mg|mcg|g|ml|%|iu|units?|meq)\b/gi, '')
     .replace(/\b(oral|tablet|capsule|solution|injection|extended|release|er|xr|cr|sr|hr)\b/gi, '')
     .replace(/\s+/g, ' ').trim();
+  return resolver?.toGeneric(base) ?? base;
 }
 
 // ─── Dose ──────────────────────────────────────────────────────────────────--
