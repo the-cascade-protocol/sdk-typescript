@@ -185,3 +185,12 @@ export {
   type CodeRef,
   type CodeKey,
 } from './utils/code-keys.js';
+
+// ─── Shared Code-Keyed Fact Index (slice-4) ───────────────────────────────────
+
+export {
+  InMemoryFactIndex,
+  type FactIndex,
+  type IndexableFact,
+  type FactQuery,
+} from './utils/fact-index.js';

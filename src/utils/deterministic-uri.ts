@@ -164,10 +164,25 @@ export function allergyUri(fields: {
 /**
  * Deterministic URI for a `MedicationRequest` record.
  *
- * @param fields - RxNorm code, start date, patient URI.
+ * Identity fields (Cascade Checkup episode-scoping parity, matched to the
+ * reconciler): RxNorm code, normalized drug name, start date, patient. Whichever
+ * are present contribute; absent fields are ignored.
+ *
+ * **Dose is intentionally NOT part of the identity.** A dose change is an update
+ * to the same medication, surfaced as a conflict by the reconciler, not a new
+ * record. Pass `normalizedName` already normalized via {@link normalizeMedName}
+ * so the identity is stable across display-name variants.
+ *
+ * Note: `startDate` is part of the identity (distinct courses get distinct
+ * URIs), but the matcher and the retrieval index deliberately key on code/name
+ * only (they answer "same drug?" and "find this drug's records", where startDate
+ * would fragment). See the shared substrate plan's resolved decisions.
+ *
+ * @param fields - RxNorm code, normalized drug name, start date, patient URI.
  */
 export function medicationUri(fields: {
   rxNormCode?: string;
+  normalizedName?: string;
   startDate?: string;
   patient?: string;
 }): string {
