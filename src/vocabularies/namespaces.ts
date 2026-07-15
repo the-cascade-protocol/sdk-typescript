@@ -83,6 +83,22 @@ export const NAMESPACES = {
 
   /** Dublin Core Terms namespace. */
   dcterms: 'http://purl.org/dc/terms/',
+
+  // ── Draft vocabularies (v1-draft) ─────────────────────────────────────────
+  // NOT registered in VOCAB_VERSIONS until v1.0 graduation (per D-PATH), and
+  // deliberately EXCLUDED from the generated JSON-LD context (see
+  // DRAFT_CONTEXT_EXCLUDED_PREFIXES in src/jsonld/context.ts). Registered here so
+  // their terms round-trip in Turtle and the reverse predicate map resolves.
+  /** Cascade Protocol evidence vocabulary (v1-draft): grounding/assertion facets. */
+  evidence: 'https://ns.cascadeprotocol.org/evidence/v1#',
+  /** Cascade Protocol workbench vocabulary (v1-draft): investigation app, notes. */
+  workbench: 'https://ns.cascadeprotocol.org/workbench/v1#',
+  /** W3C Web Annotation namespace: notes substrate (body/target/motivation/selectors). */
+  oa: 'http://www.w3.org/ns/oa#',
+  /** W3C RDF Calendar (iCalendar) namespace: follow-up due date / status. */
+  ical: 'http://www.w3.org/2002/12/cal/ical#',
+  /** SKOS namespace: workbench:followUp is an oa:Motivation with skos:broader. */
+  skos: 'http://www.w3.org/2004/02/skos/core#',
 } as const;
 
 /**
@@ -580,6 +596,22 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   // ── Core predicates (cascade: vocabulary) ──
   dataProvenance: 'cascade:dataProvenance',
   schemaVersion: 'cascade:schemaVersion',
+
+  // ── evidence v1-draft.0.2 (DRAFT) — verdict-taxonomy-v2 facet predicates ──
+  // The grounding outcome as orthogonal facets on an evidence:Assertion.
+  // Excluded from the generated JSON-LD context until v1.0 graduation.
+  direction: 'evidence:direction',
+  basis: 'evidence:basis',
+  strength: 'evidence:strength',
+  settled: 'evidence:settled',
+  reason: 'evidence:reason',
+  confidence: 'evidence:confidence',
+
+  // ── workbench v1-draft.0.4 (DRAFT) — user filing label (organization axis) ──
+  // workbench:followUp is an oa:Motivation individual (a VALUE of
+  // oa:motivatedBy), not a predicate, so it is not registered here; the
+  // workbench namespace lets it round-trip as a prefixed value.
+  userSourceLabel: 'workbench:userSourceLabel',
 } as const;
 
 // ─── Reverse Predicate Mapping ──────────────────────────────────────────────
