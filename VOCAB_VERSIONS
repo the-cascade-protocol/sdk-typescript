@@ -18,3 +18,15 @@ pots=1.4
 # core=3.3: AIAsserted provenance leaf and ProxyAgent (caregiver-proxy) added
 # health=2.4: SocialHistoryRecord (consumer-reported) added; distinct from clinical:SocialHistoryRecord
 # clinical=1.9: cascade:AIExtracted accepted as a dataProvenance value on clinical records
+#
+# 2026-07-15 batched draft sync (spec PENDING_DOWNSTREAM_SYNC rows 1-3). Per
+# D-PATH, pre-stable drafts stay UNROWED until v1.0 graduation; namespaces +
+# predicates were registered in src/vocabularies/namespaces.ts without a row, and
+# deliberately EXCLUDED from the generated JSON-LD context (see
+# DRAFT_CONTEXT_EXCLUDED_PREFIXES in src/jsonld/context.ts):
+#   - evidence@v1-draft.0.2: verdict facet predicates (direction, basis,
+#     strength, settled, reason, confidence) + the evidence namespace.
+#   - workbench@v1-draft.0.4: workbench:userSourceLabel + the workbench namespace.
+#   - workbench@v1-draft.0.5 notes substrate: external oa, ical, skos namespaces
+#     (workbench:followUp is an oa:Motivation individual, reached via the
+#     workbench namespace, not a predicate).

@@ -19,6 +19,24 @@ import { NAMESPACES, PROPERTY_PREDICATES, TYPE_MAPPING } from '../vocabularies/n
 export const CONTEXT_URI = 'https://cascadeprotocol.org/ns/context/v1/cascade.jsonld';
 
 /**
+ * Prefixes for pre-stable draft vocabularies (and the external namespaces used
+ * only by them). Draft vocabs are NOT registered in VOCAB_VERSIONS and get NO
+ * JSON-LD context until v1.0 graduation (per D-PATH / spec
+ * PENDING_DOWNSTREAM_SYNC.md). Their namespaces and predicates are still
+ * registered in namespaces.ts so Turtle terms round-trip and the reverse
+ * predicate map resolves, but they are deliberately excluded from the generated
+ * context here so it stays byte-identical to the released-only context. Remove a
+ * prefix from this set when its vocabulary graduates to a released version.
+ */
+const DRAFT_CONTEXT_EXCLUDED_PREFIXES = new Set(['evidence', 'workbench', 'oa', 'ical', 'skos']);
+
+/** Prefix of a `prefix:localName` CURIE, or '' if it has no colon. */
+function curiePrefix(curie: string): string {
+  const colonIdx = curie.indexOf(':');
+  return colonIdx >= 0 ? curie.slice(0, colonIdx) : '';
+}
+
+/**
  * Build and return the Cascade Protocol JSON-LD context object.
  *
  * The context includes:
@@ -32,8 +50,9 @@ export const CONTEXT_URI = 'https://cascadeprotocol.org/ns/context/v1/cascade.js
 export function getContext(): object {
   const context: Record<string, unknown> = {};
 
-  // Namespace prefixes
+  // Namespace prefixes (draft vocabularies excluded until v1.0 graduation)
   for (const [prefix, uri] of Object.entries(NAMESPACES)) {
+    if (DRAFT_CONTEXT_EXCLUDED_PREFIXES.has(prefix)) continue;
     context[prefix] = uri;
   }
 
@@ -88,6 +107,8 @@ export function getContext(): object {
   ]);
 
   for (const [key, pred] of Object.entries(PROPERTY_PREDICATES)) {
+    // Draft-vocabulary predicates are excluded from the context until v1.0.
+    if (DRAFT_CONTEXT_EXCLUDED_PREFIXES.has(curiePrefix(pred))) continue;
     if (idTypedFields.has(key)) {
       context[key] = { '@id': pred, '@type': '@id' };
     } else if (dateTimeFields.has(key)) {
