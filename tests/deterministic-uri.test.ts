@@ -321,3 +321,91 @@ describe('canonical form of a set-valued identity input (core v3.6)', () => {
     expect(canonicalFieldValue(['73211009', '44054006', '44054006'])).toBe('44054006,73211009');
   });
 });
+
+// ─── Identity KEY order is by code point, not locale collation ───────────────
+//
+// core.ttl:227 (cascade:cascadeUri, NORMATIVE): "Sort ascending by Unicode code
+// point. (Code point, not locale collation: a locale-dependent order would make
+// identity depend on the machine.)"
+//
+// The block above pins the ordering of a set-valued field's MEMBERS. This block
+// pins the ordering of the identity KEYS, which is the other half of the same
+// rule and the half that was being sorted with `localeCompare`.
+//
+// Every pair below is chosen so that code-point order and ICU collation
+// DISAGREE, in every locale. A test built on a pair the two orders agree on
+// (`_under` vs `alpha`, for instance — ICU and code point both put `_under`
+// first) would pass against a locale comparator and prove nothing.
+//
+// The expected value is written as `deterministicUuid(<identity string>)`, not
+// as a second call to `contentHashedUri`, so the assertion names the exact key
+// order of the hashed material rather than comparing the function with itself.
+
+describe('identity key order (core.ttl:227): code point, never locale collation', () => {
+  it('KEY ORDER: an uppercase-initial key precedes a lowercase-initial key', () => {
+    // Code point: `Z` U+005A < `a` U+0061, so `Zeta` is first. Every ICU locale
+    // orders these the other way (case is a tertiary difference under a
+    // collator, so `alpha` < `Zeta`), which is exactly the machine dependence
+    // core.ttl:227 forbids.
+    expect(contentHashedUri('Condition', { Zeta: '1', alpha: '2' })).toBe(
+      `urn:uuid:${deterministicUuid('Condition::Zeta=1|alpha=2')}`,
+    );
+  });
+
+  it('KEY ORDER: an underscore-initial key follows an uppercase-initial key', () => {
+    // Code point: `A` U+0041 < `_` U+005F, so `Alpha` is first. ICU sorts
+    // punctuation before letters and puts `_under` first.
+    expect(contentHashedUri('Condition', { _under: '3', Alpha: '4' })).toBe(
+      `urn:uuid:${deterministicUuid('Condition::Alpha=4|_under=3')}`,
+    );
+  });
+
+  it('KEY ORDER: keys differing only in case order by code point', () => {
+    // Code point: `B` U+0042 < `b` U+0062, so `aB` is first. ICU orders
+    // lowercase before uppercase at the tertiary level and puts `ab` first.
+    // This is the realistic hazard: two camelCase keys, one with a capital.
+    expect(contentHashedUri('Condition', { aB: '1', ab: '2' })).toBe(
+      `urn:uuid:${deterministicUuid('Condition::aB=1|ab=2')}`,
+    );
+  });
+
+  it('KEY ORDER: insertion order of the input object does not matter', () => {
+    // Guards the sort itself. If the comparator were dropped entirely, the
+    // three assertions above would still pass whenever the object literal
+    // happened to be written in code-point order.
+    expect(contentHashedUri('Condition', { alpha: '2', Zeta: '1' })).toBe(
+      contentHashedUri('Condition', { Zeta: '1', alpha: '2' }),
+    );
+  });
+
+  it('GOLDEN PIN: a fixed record mints a fixed URI, byte for byte', () => {
+    // Four keys spanning the three code-point boundaries a collator disagrees
+    // with: `Alpha` (U+0041) < `Zeta` (U+005A) < `_under` (U+005F) < `alpha`
+    // (U+0061). The hashed identity string is therefore
+    //   "Condition::Alpha=4|Zeta=1|_under=3|alpha=2"
+    // and its CDP-UUID is the literal below, computed independently of this
+    // SDK (sha1 of that string, laid out per the CDP-UUID rule). An en-US
+    // collator would hash "Condition::alpha=2|Alpha=4|Zeta=1|_under=3" and mint
+    // a different UUID; so would a differently-configured machine. Pinning the
+    // literal is what makes a future re-mint visible instead of silent.
+    expect(
+      contentHashedUri('Condition', { Zeta: '1', alpha: '2', _under: '3', Alpha: '4' }),
+    ).toBe('urn:uuid:6752ab65-a625-5681-bcab-914c2199f860');
+  });
+
+  it('GOLDEN PIN: a real camelCase key set is unmoved by the comparator change', () => {
+    // The migration statement, executable. Every key set this SDK actually
+    // hashes is camelCase with a lowercase initial, and for such keys
+    // code-point order and en-US collation agree — so no URI any consumer has
+    // minted moves. This literal is the `observation-glucose` cross-SDK
+    // conformance vector, pinned here as well so the claim is checked in this
+    // repository even when the sibling checkout is absent.
+    expect(
+      contentHashedUri('Observation', {
+        loincCode: '2339-0',
+        date: '2024-01-10',
+        patient: 'urn:uuid:patient-smith',
+      }),
+    ).toBe('urn:uuid:6514e8ed-e89f-5eef-83a4-cff337d824ae');
+  });
+});
