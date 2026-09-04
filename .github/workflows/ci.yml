@@ -14,8 +14,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Floor of the declared engines range, plus current LTS.
-        node-version: ['18.x', '22.x']
+        # Floor of the declared engines range, plus current LTS. The floor is
+        # 20 because the identity function calls `globalThis.crypto.randomUUID`
+        # — the Web Crypto global, available in a browser and in Node from 19 —
+        # rather than `node:crypto`'s. Node 18 is end-of-life.
+        node-version: ['20.x', '22.x']
 
     steps:
       - name: Check out sdk-typescript
@@ -63,3 +66,39 @@ jobs:
       - name: Test
         working-directory: sdk-typescript
         run: npm test
+
+  # The package must load in a browser: a Cascade pod is patient-carried data,
+  # and the places a patient or caregiver meets it are overwhelmingly browsers
+  # (a protocol playground, a desktop app's WebView renderer, any patient-facing
+  # web app). This job is what makes that a checked property rather than an
+  # intention — it is the reason a `node:crypto` import on the package barrel
+  # cannot come back. It needs no conformance sibling: nothing here reads a
+  # fixture, and the browser entry point must not touch the filesystem at all.
+  browser-bundle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out sdk-typescript
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Bundles src/index.ts with esbuild for a browser target. An unresolved
+      # `node:` builtin fails the bundle outright; a Node-only construct that
+      # survives resolution (an externalized builtin, an interop `require`) is
+      # caught by the scan of the output.
+      - name: Bundle the public entry point for a browser
+        run: npm run check:browser
+
+      # The bundle building is not the same claim as the bundle working, so this
+      # executes serialize / deserialize / validate / toJsonLd through the
+      # bundled artefact.
+      - name: Smoke-test the bundled API
+        run: npx vitest run tests/browser-bundle.test.ts
