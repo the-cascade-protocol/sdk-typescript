@@ -1,22 +1,92 @@
 # Changelog
 
-## [Unreleased]
+## [4.0.0]
 
-The published package now loads and runs in a browser, and CI proves it on every
+Two breaking changes ship together in this major, both about what the published
+package requires of its host and what it guarantees about an identifier.
+
+**Breaking 1 — `engines.node` is now `>=20.0.0`** (was `>=18.0.0`). Node 18 is
+end-of-life, and the identity function needs the Web Crypto global that Node
+gained in 19. Nothing about the published API changes with it.
+
+**Breaking 2 — identity keys and set-valued field members are now ordered by
+Unicode CODE POINT, not by UTF-16 code unit.** core v3.6 states the rule
+normatively on `cascade:cascadeUri`: "Sort ascending by Unicode code point.
+(Code point, not locale collation: a locale-dependent order would make identity
+depend on the machine.)" This SDK sorted with `<`/`>` and a bare `.sort()`, both
+of which compare UTF-16 code units. The two orders are identical across the
+whole Basic Multilingual Plane and disagree on exactly one shape of input: an
+astral-plane character (a surrogate pair, leading unit U+D800..U+DBFF) compared
+with a BMP character at or above U+E000, where the surrogate makes the astral
+character sort first even though its code point is higher.
+
+Every JavaScript implementation shared that behaviour, so no identifier split
+BETWEEN them — but none agreed with the spec, and an implementation whose native
+string order is by code point (Python's, Swift's) would disagree with all of
+them on the same record. The conformance corpus measures it at both sort sites,
+`keyOrderVectors/key-order-astral-vs-bmp` and
+`multiValuedFieldVectors/condition-member-order-astral-vs-bmp`; both failed here
+before this release and pass after it.
+
+**Which URIs move.** Only an identifier that sorted an astral-plane character
+against a BMP character at or above U+E000 — at either sort site. Everything
+else is bit-identical, because the two orders agree there by construction.
+Measured rather than asserted: `scripts/dump-identity-uris.mjs` mints every
+deterministic URI over the shared conformance fixture corpus (60,152 URIs across
+166 fixture files — the full field set, the field set reversed, every single
+field, and every unordered pair, so each key is compared from both sides) before
+and after the change. Seven rows move, all seven inside
+`deterministic-ids/test-vectors.json` and all seven the astral vectors
+themselves. Across the other 165 fixtures: 59,507 URIs, zero differences. Seven
+further rows in that corpus are the documented random third tier — the fallback
+taken when a record has no content field and no `fallbackId` — and the dump
+records them as such rather than as a value, since they differ between two runs
+of unchanged code as well.
+
+### Added (code-point comparator)
+
+- **`compareCodePoints(a, b)`**, exported from the package barrel. The identity
+  comparator, written out because JavaScript has no built-in that orders by code
+  point: `localeCompare` asks ICU for the reader's alphabet, and `<` / a bare
+  `.sort()` order UTF-16 code units. Its header states both failure modes and
+  the exact input on which the second one bites. Exported so a consumer
+  assembling its own identity string sorts the way this SDK does.
+- **`scripts/dump-identity-uris.mjs`**, the corpus-wide URI dump described
+  above, so "no URI moves" is a claim a reviewer can re-run rather than take.
+- Direct tests for the comparator (the divergence, agreement with the built-in
+  across a BMP sample, non-collation, totality, prefix ordering, and that BOTH
+  sort sites use it), plus a guard that the identity module never reintroduces
+  `localeCompare` or a bare `.sort()` outside prose.
+- `tests/deterministic-uri.ts` now iterates the conformance `keyOrderVectors`
+  array, which it did not read before, and asserts that both astral vectors are
+  present by label so a fixture checkout that had lost them cannot read as a
+  green run that tested nothing.
+
+### Changed (code-point comparator)
+
+- **`contentHashedUri` sorts identity keys with `compareCodePoints`** instead of
+  `(a < b ? -1 : a > b ? 1 : 0)`.
+- **`canonicalFieldValue` sorts set members with `compareCodePoints`** instead
+  of a bare `.sort()`. This site was the latent half: it had no vector before
+  this release, so a fix reaching only the key comparator would have passed
+  every key-order vector while still minting a divergent identifier for a record
+  whose field held an astral member.
+
+### Browser safety, and the vendored SHA-1
+
+Also part of this release, and where the Node 20 floor above comes from: the
+published package now loads and runs in a browser, and CI proves it on every
 pull request.
 
-**Breaking: `engines.node` is now `>=20.0.0`** (was `>=18.0.0`). Node 18 is
-end-of-life, and the identity function needs the Web Crypto global that Node
-gained in 19. Nothing else about the published API changes.
+**No URI moves from this half.** Identity output is bit-identical across the
+digest swap. The deterministic URI for every conformance fixture input was
+computed before and after and compared: 8,533 deterministic URIs, zero
+differences. The only values that differ between runs are the ones
+`contentHashedUri` documents as random — the fallback taken when a record has no
+content fields and no `fallbackId` — and those differ between two runs of
+unchanged code as well.
 
-**No URI moves.** Identity output is bit-identical across this change. The
-deterministic URI for every conformance fixture input was computed before and
-after the swap and compared: 8,533 deterministic URIs, zero differences. The only
-values that differ between runs are the ones `contentHashedUri` documents as
-random — the fallback taken when a record has no content fields and no
-`fallbackId` — and those differ between two runs of unchanged code as well.
-
-### Added
+#### Added (browser safety)
 
 - **Browser-safety gate.** `npm run check:browser` bundles the public entry point
   with esbuild for a browser target and fails on an unresolved `node:` builtin or
@@ -30,7 +100,7 @@ random — the fallback taken when a record has no content fields and no
   padding block boundaries, and Node's `createHash` over 1,000 random strings
   spanning all four UTF-8 encoding widths including astral-plane characters.
 
-### Changed
+#### Changed (browser safety)
 
 - **`src/utils/deterministic-uri.ts` no longer imports `node:crypto`.** It sat on
   the package barrel, so that single import made the entire SDK unloadable in any

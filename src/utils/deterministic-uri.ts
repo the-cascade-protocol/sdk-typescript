@@ -60,33 +60,81 @@ export function deterministicUuid(input: string): string {
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
-// ─── Why neither sort site here calls `localeCompare` ────────────────────────
-//
-// This note governs BOTH string sorts in this file: the members of a set-valued
-// field in `canonicalFieldValue`, and the identity keys in `contentHashedUri`.
-/*
- * core v3.6 states it normatively on `cascade:cascadeUri`: "Sort ascending by
- * Unicode code point. (Code point, not locale collation: a locale-dependent
- * order would make identity depend on the machine.)" A collator orders `alpha`
- * before `Zeta` and `_under` before `Alpha`; code point orders both the other
- * way, and a collator's answer additionally varies with locale and ICU build.
- * An identifier is not an identifier if the machine that minted it is an input.
+// ─── The identity comparator ─────────────────────────────────────────────────
+
+/**
+ * Compare two strings by Unicode CODE POINT, ascending.
  *
- * The honest statement of what `<` and the default `Array.prototype.sort`
- * comparator actually do: they compare by UTF-16 **code unit**, not by code
- * point. The two orders are identical for every character in the Basic
- * Multilingual Plane, and they diverge only when an astral-plane character
- * (>= U+10000, encoded as a surrogate pair in the range U+D800..U+DFFF) is
- * compared against a BMP character at or above U+E000: by code point the
- * astral character sorts last, by code unit it sorts before the U+E000 one.
+ * This is the comparator for BOTH string sorts in this file: the members of a
+ * set-valued field in `canonicalFieldValue`, and the identity keys in
+ * `contentHashedUri`. It exists because JavaScript offers no built-in that does
+ * this, and the two things it does offer are each wrong here in a different way.
  *
- * That divergence cannot be reached by the identity KEYS, which are ASCII field
- * names. It is reachable in principle by a set-valued field's MEMBERS, which are
- * caller-supplied strings; in practice those are terminology codes. Correcting
- * it would mean comparing by code point explicitly, which would itself re-mint
- * any identifier that had ever hashed such a member — so it is documented here
- * rather than silently changed.
+ * **Not `localeCompare`.** core v3.6 states the rule normatively on
+ * `cascade:cascadeUri`: "Sort ascending by Unicode code point. (Code point, not
+ * locale collation: a locale-dependent order would make identity depend on the
+ * machine.)" A collator orders `alpha` before `Zeta` and `_under` before
+ * `Alpha`; code point orders both the other way, and a collator's answer
+ * additionally varies with locale and ICU build. An identifier is not an
+ * identifier if the machine that minted it is an input.
+ *
+ * **Not `<`/`>` or a bare `.sort()` either, which is the correction this
+ * function makes.** Those compare by UTF-16 **code unit**, not by code point.
+ * The two orders are identical for every character in the Basic Multilingual
+ * Plane, and they diverge on exactly one shape of input: an astral-plane
+ * character (>= U+10000, encoded as a surrogate pair whose leading unit is in
+ * U+D800..U+DBFF) compared against a BMP character at or above U+E000. By code
+ * point the astral character sorts last; by code unit it sorts first, because
+ * its leading surrogate is below U+E000. So `！` (U+FF01) and `𝔞` (U+1D51E)
+ * sort in opposite orders under the two rules, and a record whose identity
+ * touches such a pair mints two different URIs depending on which rule ran.
+ *
+ * This SDK compared code units until this change, as did every other JavaScript
+ * implementation, so the two agreed with each other and no identifier split
+ * BETWEEN implementations — but neither agreed with the spec, and the moment a
+ * non-JavaScript implementation (whose native string order is by code point,
+ * as Python's and Swift's are) mints an identifier over the same record, they
+ * disagree. The conformance corpus measures this at both sort sites:
+ * `keyOrderVectors/key-order-astral-vs-bmp` for the keys and
+ * `multiValuedFieldVectors/condition-member-order-astral-vs-bmp` for the
+ * members. Both failed here before this function existed.
+ *
+ * **What it costs.** Correcting the comparator re-mints any identifier that had
+ * ever sorted an astral character against a BMP character at or above U+E000 —
+ * and only those. Every identifier over Basic-Multilingual-Plane content, which
+ * is every identifier over terminology codes, dates, names and URIs, is
+ * bit-identical before and after: the two orders agree there by construction.
+ * That is why this is safe to fix rather than something to leave documented.
+ *
+ * Unpaired surrogates (a lone U+D800..U+DFFF, which `codePointAt` reports as
+ * itself) compare by their own value. They are not valid Unicode scalars, no
+ * canonical order for them exists to be right about, and the comparison stays
+ * total and deterministic — which is all identity needs of them.
+ *
+ * Exported so a caller assembling its own identity string sorts the way this
+ * one does, and so the rule is testable directly rather than only through the
+ * URIs it feeds.
  */
+export function compareCodePoints(a: string, b: string): number {
+  if (a === b) return 0;
+  let i = 0;
+  let j = 0;
+  while (i < a.length && j < b.length) {
+    const ca = a.codePointAt(i)!;
+    const cb = b.codePointAt(j)!;
+    if (ca !== cb) return ca < cb ? -1 : 1;
+    // A code point above U+FFFF occupies two UTF-16 code units; everything else
+    // occupies one. `ca === cb` here, so both sides advance by the same amount.
+    const width = ca > 0xffff ? 2 : 1;
+    i += width;
+    j += width;
+  }
+  // One ran out. The shorter string is a prefix of the longer, so it sorts
+  // first — the same tie-break `<` applies, reached the same way.
+  if (i < a.length) return 1;
+  if (j < b.length) return -1;
+  return 0;
+}
 
 /**
  * Reduce one content-field value to the string that enters the hash.
@@ -110,9 +158,10 @@ export function deterministicUuid(input: string): string {
  *    identity.
  * 4. An array with no surviving member is **absent**, exactly as `undefined` is.
  *
- * Sorting uses the default comparator, i.e. UTF-16 code-unit order, NOT
- * `localeCompare`. See the note at the top of this section for why that is the
- * whole point, and for the one case where code units and code points diverge.
+ * Sorting uses {@link compareCodePoints}, not `localeCompare` and not the
+ * default comparator — the default is UTF-16 code-unit order, which disagrees
+ * with code-point order whenever an astral-plane member meets a BMP member at
+ * or above U+E000. See that function for the full statement.
  *
  * **Scope, and the one place this must not be used.** It is for inputs whose
  * source element is a set. It must NOT be applied to an input whose source order
@@ -132,7 +181,7 @@ export function canonicalFieldValue(value: MultiValue<string> | undefined | null
     const trimmed = item.trim();
     if (trimmed.length > 0) seen.add(trimmed);
   }
-  return seen.size > 0 ? [...seen].sort().join(',') : undefined;
+  return seen.size > 0 ? [...seen].sort(compareCodePoints).join(',') : undefined;
 }
 
 /**
@@ -179,12 +228,12 @@ export function contentHashedUri(
   const content = Object.entries(contentFields)
     .map(([k, v]) => [k, canonicalFieldValue(v)] as const)
     .filter(([, v]) => v != null && v.trim().length > 0)
-    // Key order is part of the identity, so it is compared directly rather than
-    // with `localeCompare`. core v3.6 on `cascade:cascadeUri`: "Sort ascending
-    // by Unicode code point. (Code point, not locale collation: a
-    // locale-dependent order would make identity depend on the machine.)" See
-    // the note above `canonicalFieldValue`.
-    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    // Key order is part of the identity. core v3.6 on `cascade:cascadeUri`:
+    // "Sort ascending by Unicode code point. (Code point, not locale collation:
+    // a locale-dependent order would make identity depend on the machine.)"
+    // `compareCodePoints` is that rule; `localeCompare` and a bare `<`/`>` are
+    // each wrong here for a different reason, both spelled out on it.
+    .sort(([a], [b]) => compareCodePoints(a, b))
     .map(([k, v]) => `${k}=${v}`)
     .join('|');
 
