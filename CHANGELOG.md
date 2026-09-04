@@ -1,5 +1,54 @@
 # Changelog
 
+## [Unreleased]
+
+The published package now loads and runs in a browser, and CI proves it on every
+pull request.
+
+**Breaking: `engines.node` is now `>=20.0.0`** (was `>=18.0.0`). Node 18 is
+end-of-life, and the identity function needs the Web Crypto global that Node
+gained in 19. Nothing else about the published API changes.
+
+**No URI moves.** Identity output is bit-identical across this change. The
+deterministic URI for every conformance fixture input was computed before and
+after the swap and compared: 8,533 deterministic URIs, zero differences. The only
+values that differ between runs are the ones `contentHashedUri` documents as
+random — the fallback taken when a record has no content fields and no
+`fallbackId` — and those differ between two runs of unchanged code as well.
+
+### Added
+
+- **Browser-safety gate.** `npm run check:browser` bundles the public entry point
+  with esbuild for a browser target and fails on an unresolved `node:` builtin or
+  a Node-only construct surviving into the output. A `browser-bundle` CI job runs
+  it, then executes `serialize`, `deserialize`, `deserializeOne`, `validate`,
+  `toJsonLd` and `fromJsonLd` through the bundled artefact — building and working
+  being two different claims.
+- **`src/vendor/sha1.ts`** — SHA-1 written from FIPS PUB 180-4, original work
+  under this package's own licence, with no third-party notice obligation and no
+  runtime dependency. Tested against the four published FIPS vectors, the
+  padding block boundaries, and Node's `createHash` over 1,000 random strings
+  spanning all four UTF-8 encoding widths including astral-plane characters.
+
+### Changed
+
+- **`src/utils/deterministic-uri.ts` no longer imports `node:crypto`.** It sat on
+  the package barrel, so that single import made the entire SDK unloadable in any
+  browser bundle. `createHash('sha1')` becomes the vendored implementation and
+  `randomUUID()` becomes `globalThis.crypto.randomUUID()`.
+
+  The algorithm is unchanged and deliberately so: SHA-1 is named in the cross-SDK
+  CDP-UUID rule, so a different digest would move every URI every pod already
+  holds. `crypto.subtle` was not the answer either — it is async-only, and this
+  function is called from synchronous record construction throughout the SDK and
+  its consumers. A synchronous, universal SHA-1 is what both constraints leave.
+
+  There is deliberately no dynamic-import fallback for `randomUUID`: a
+  conditional `import()` of a builtin is opaque to a bundler's static analysis
+  and would defeat the gate above.
+
+- CI's Node matrix floor moves from 18.x to 20.x, tracking `engines`.
+
 ## [3.1.0] - 2026-08-28
 
 Vocabulary sync: core 3.6 to 3.7, health 2.7 to 2.8, clinical 1.15 to 1.16,

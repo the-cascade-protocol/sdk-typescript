@@ -14,7 +14,23 @@
  * @see https://cascadeprotocol.org/docs/cascade-protocol-schemas
  */
 
-import { createHash, randomUUID } from 'node:crypto';
+// SHA-1 comes from a vendored pure-JS implementation, not `node:crypto`. This
+// module sits on the package barrel, so a `node:` import here made the whole SDK
+// unloadable in a browser — and a browser is where most of the places a patient
+// meets a pod actually run. The three candidates and why only one works:
+//
+//   - `node:crypto` `createHash`  — synchronous, but Node-only.
+//   - `crypto.subtle.digest`      — universal, but ASYNC-ONLY, and this function
+//                                   is called from synchronous record
+//                                   construction throughout the SDK and its
+//                                   consumers. Making it async is a breaking
+//                                   change to every caller.
+//   - a vendored pure-JS SHA-1    — synchronous AND universal.
+//
+// Changing the ALGORITHM was never an option: SHA-1 is named in the cross-SDK
+// CDP-UUID rule above, so a different digest would move every URI every pod
+// already holds. See `../vendor/sha1.ts`.
+import { sha1Hex } from '../vendor/sha1.js';
 import type { MultiValue } from '../models/common.js';
 
 // ─── Internal Helpers ────────────────────────────────────────────────────────
@@ -29,7 +45,7 @@ import type { MultiValue } from '../models/common.js';
  * @internal
  */
 export function deterministicUuid(input: string): string {
-  const hash = createHash('sha1').update(input).digest('hex');
+  const hash = sha1Hex(input);
   const v = ((parseInt(hash.slice(16, 18), 16) & 0x3f) | 0x80)
     .toString(16)
     .padStart(2, '0');
@@ -178,7 +194,12 @@ export function contentHashedUri(
   if (fallbackId) {
     return `urn:uuid:${deterministicUuid(`${resourceType}:${fallbackId}`)}`;
   }
-  return `urn:uuid:${randomUUID()}`;
+  // `globalThis.crypto`, not `node:crypto`: the Web Crypto global is standard in
+  // browsers and, since Node 19, in Node too — which is why `engines.node` is
+  // `>=20`. Deliberately NOT wrapped in a dynamic-import fallback: a conditional
+  // `import()` of a builtin is opaque to a bundler's static analysis, so it would
+  // defeat the very gate that keeps this file browser-safe.
+  return `urn:uuid:${globalThis.crypto.randomUUID()}`;
 }
 
 // ─── Typed Convenience Helpers ───────────────────────────────────────────────
