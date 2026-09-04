@@ -202,6 +202,7 @@ export {
   // two obvious choices — `localeCompare` and a bare `.sort()` — are each wrong
   // for identity in a different way.
   compareCodePoints,
+  canonicalFieldValue,
   contentHashedUri,
   patientUri,
   immunizationUri,

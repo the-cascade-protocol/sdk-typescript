@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `canonicalFieldValue` is exported from the package entry point beside `compareCodePoints`, so a consumer can obtain the canonical form of a multi-valued field, not only the comparator that orders it.
+
 ## [4.0.0]
 
 Two breaking changes ship together in this major, both about what the published
