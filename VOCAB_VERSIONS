@@ -18,7 +18,7 @@
 #
 core=3.8
 health=2.8
-clinical=1.16
+clinical=1.20
 coverage=1.5
 checkup=3.3
 pots=1.4
@@ -279,3 +279,16 @@ pots=1.4
 #     round trip rather than against a ratified oracle. Fixtures are the
 #     follow-up; until they exist, cross-implementation agreement with
 #     sdk-python and cascade-cli on these terms is UNVERIFIED.
+
+# clinical=1.20: two terms, both registered as predicates only (no
+#     clinical:ClinicalDocument model exists here to attach them to, the same
+#     position the v1.16 document terms are in).
+#     narrativeText was declared in an earlier clinical release and was never
+#     registered in this SDK until now; v1.20 restates its comment as the
+#     canonical spelling for FHIR Narrative.text.div / C-CDA section text with
+#     markup stripped, without changing the term itself.
+#     documentType is new in v1.20: the human-readable document-type label
+#     (FHIR DocumentReference.type.text). It is a different predicate from the
+#     pre-existing cascade:documentType (a closed set of lowercase slugs);
+#     cascade:documentType itself remains unregistered in this SDK, a
+#     pre-existing gap this change does not address.
