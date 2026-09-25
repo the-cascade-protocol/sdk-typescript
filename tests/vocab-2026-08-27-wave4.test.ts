@@ -182,7 +182,7 @@ describe('wave-4 term census', () => {
       .filter((line) => /^[a-z]+=/.test(line));
     expect(rows).toContain('core=3.8');
     expect(rows).toContain('health=2.8');
-    expect(rows).toContain('clinical=1.20');
+    expect(rows).toContain('clinical=1.16');
     expect(rows).toContain('coverage=1.5');
   });
 });

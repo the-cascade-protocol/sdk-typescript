@@ -18,7 +18,7 @@
 #
 core=3.8
 health=2.8
-clinical=1.20
+clinical=1.16
 coverage=1.5
 checkup=3.3
 pots=1.4
@@ -280,7 +280,14 @@ pots=1.4
 #     follow-up; until they exist, cross-implementation agreement with
 #     sdk-python and cascade-cli on these terms is UNVERIFIED.
 
-# clinical=1.20: two terms, both registered as predicates only (no
+# clinical row HELD at 1.16 (not 1.20): the two clinical v1.20 terms below are
+#     registered ahead of the row, but clinical v1.19 is not reflected here.
+#     v1.19 makes clinical:startDate, clinical:endDate, clinical:abatementDate
+#     and clinical:category the canonical spellings (health:startDate and
+#     health:endDate, the only spellings this SDK registers, are now migration-
+#     window only), and this SDK registers none of the four. Claiming 1.20
+#     would stop the next sync from re-examining v1.17 to v1.19.
+# clinical=1.20 terms registered ahead of the row: two terms, both registered as predicates only (no
 #     clinical:ClinicalDocument model exists here to attach them to, the same
 #     position the v1.16 document terms are in).
 #     narrativeText was declared in an earlier clinical release and was never
