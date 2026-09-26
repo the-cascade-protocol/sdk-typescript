@@ -718,6 +718,24 @@ export const PROPERTY_PREDICATES: Record<string, string> = {
   // Who SIGNED the document, routinely not who wrote it.
   authenticatorName: 'clinical:authenticatorName',
 
+  // ── Clinical v1.20: narrative text and document type ──
+  // PREDICATES ONLY, same position as the v1.16 document terms directly
+  // above: this SDK models no clinical:ClinicalDocument class.
+  //
+  // narrativeText was already declared in an earlier clinical release; v1.20
+  // restates its comment as the canonical spelling for FHIR Narrative.text.div
+  // / C-CDA section text with markup stripped. It was never registered here
+  // before this change.
+  narrativeText: 'clinical:narrativeText',
+  // The human-readable label for the kind of document (FHIR
+  // DocumentReference.type.text), e.g. "Progress Note". This is a DIFFERENT
+  // predicate from cascade:documentType, which is a closed, short set of
+  // lowercase slugs (summarization, progress-note, discharge-summary) that
+  // software branches on. clinical:documentType is open-ended text for a
+  // person to read; neither is a substitute for the other and both should be
+  // written where both are known.
+  documentType: 'clinical:documentType',
+
   // ── Family history predicates ──
   // Note: `relationship` is shared with Coverage predicates above (clinical:relationship)
   onsetAge: 'health:onsetAge',

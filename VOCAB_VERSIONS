@@ -279,3 +279,23 @@ pots=1.4
 #     round trip rather than against a ratified oracle. Fixtures are the
 #     follow-up; until they exist, cross-implementation agreement with
 #     sdk-python and cascade-cli on these terms is UNVERIFIED.
+
+# clinical row HELD at 1.16 (not 1.20): the two clinical v1.20 terms below are
+#     registered ahead of the row, but clinical v1.19 is not reflected here.
+#     v1.19 makes clinical:startDate, clinical:endDate, clinical:abatementDate
+#     and clinical:category the canonical spellings (health:startDate and
+#     health:endDate, the only spellings this SDK registers, are now migration-
+#     window only), and this SDK registers none of the four. Claiming 1.20
+#     would stop the next sync from re-examining v1.17 to v1.19.
+# clinical=1.20 terms registered ahead of the row: two terms, both registered as predicates only (no
+#     clinical:ClinicalDocument model exists here to attach them to, the same
+#     position the v1.16 document terms are in).
+#     narrativeText was declared in an earlier clinical release and was never
+#     registered in this SDK until now; v1.20 restates its comment as the
+#     canonical spelling for FHIR Narrative.text.div / C-CDA section text with
+#     markup stripped, without changing the term itself.
+#     documentType is new in v1.20: the human-readable document-type label
+#     (FHIR DocumentReference.type.text). It is a different predicate from the
+#     pre-existing cascade:documentType (a closed set of lowercase slugs);
+#     cascade:documentType itself remains unregistered in this SDK, a
+#     pre-existing gap this change does not address.
